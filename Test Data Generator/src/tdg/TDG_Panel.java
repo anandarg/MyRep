@@ -1,21 +1,37 @@
 package tdg;
 
 import javax.swing.JPanel;
+
 import java.awt.Color;
+
+
+
+
+
+
 import javax.swing.JLabel;
 import javax.swing.SpringLayout;
+
 import java.awt.Font;
-import java.awt.SystemColor;
+
+import javax.swing.JFileChooser;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JSeparator;
+import java.io.InputStream;
 
-public class TDG_Panel extends JPanel implements ActionListener {
+import javax.swing.JSeparator;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+public class TDG_Panel extends JPanel implements ActionListener{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3114058600440465384L;
 	private JLabel lblAppTitle;
 	private JLabel lblSrcFileLoc;
 	private SpringLayout currentLayout;
@@ -25,6 +41,9 @@ public class TDG_Panel extends JPanel implements ActionListener {
 	private JTextField txtFuncFileLoc;
 	private JTextField txtRepFileLoc;
 	private JTextField textField;
+	private JTextField txtConfigFile;
+	private ManageConfigWindow mCfgWin;
+	
 	public TDG_Panel() {
 		setForeground(Color.RED);
 		setBackground(Color.LIGHT_GRAY);
@@ -170,22 +189,108 @@ public class TDG_Panel extends JPanel implements ActionListener {
 		currentLayout.putConstraint(SpringLayout.EAST, separator, 0, SpringLayout.EAST, btnExit);
 		add(separator);
 		
+		JButton btnSave = new JButton("Save");
+		btnSave.addActionListener(this);
+		currentLayout.putConstraint(SpringLayout.NORTH, btnSave, 0, SpringLayout.NORTH, btnGenInFiles);
+		currentLayout.putConstraint(SpringLayout.EAST, btnSave, -6, SpringLayout.WEST, btnGenInFiles);
+		btnSave.setToolTipText("Save the config settings to a properties file");
+		btnSave.setActionCommand("Save");
+		add(btnSave);
+		
+		JButton button = new JButton("Open Config File");
+		button.addActionListener(this);
+		currentLayout.putConstraint(SpringLayout.NORTH, button, 50, SpringLayout.NORTH, this);
+		currentLayout.putConstraint(SpringLayout.EAST, button, 0, SpringLayout.EAST, btnExit);
+		button.setToolTipText("Open config properties file");
+		button.setActionCommand("OpnCfgFile");
+		add(button);
+		
+		JLabel lblCfgFile = new JLabel("Selected Config File:");
+		currentLayout.putConstraint(SpringLayout.NORTH, lblCfgFile, 3, SpringLayout.NORTH, button);
+		currentLayout.putConstraint(SpringLayout.EAST, lblCfgFile, 0, SpringLayout.EAST, lblSrcFileLoc);
+		lblCfgFile.setToolTipText("Location of the config file ");
+		lblCfgFile.setForeground(Color.RED);
+		lblCfgFile.setFont(new Font("Tahoma", Font.BOLD, 12));
+		add(lblCfgFile);
+		
+		txtConfigFile = new JTextField();
+		currentLayout.putConstraint(SpringLayout.NORTH, txtConfigFile, 1, SpringLayout.NORTH, button);
+		currentLayout.putConstraint(SpringLayout.WEST, txtConfigFile, 0, SpringLayout.WEST, txtSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.EAST, txtConfigFile, 0, SpringLayout.EAST, txtSrcFileLoc);
+		txtConfigFile.setColumns(250);
+		add(txtConfigFile);
+		
 		
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-	    if("exit".equals(e.getActionCommand())) {
-	      System.out.println("exit button selected");
-	      SwingUtilities.getWindowAncestor(this).dispose();
-	    } 
-	    else if ("GenInputFiles".equals(e.getActionCommand())) {
-	      System.out.println("Generate Input Files button selected");
+	    Process proc;
+		InputStream in;
+		InputStream err;
+		try {
+	    
+	    
+			if("exit".equals(e.getActionCommand())) {
+		      System.out.println("exit button selected");
+		      SwingUtilities.getWindowAncestor(this).dispose();
+		    } 
+		    else if ("GenInputFiles".equals(e.getActionCommand())) {
+		      System.out.println("Generate Input Files button selected");
+		    }
+		    else if ("GenRepFile".equals(e.getActionCommand())) {
+			      System.out.println("Generate Representation File button selected");
+			      proc = Runtime.getRuntime().exec("java -jar -Xmx8192m -Xms8192m .\\lib\\ComputeChunks.jar " + txtConfigFile.getText());
+			      proc.waitFor();
+			      // Then retrieve the process output
+			      in = proc.getInputStream();
+			      err = proc.getErrorStream();
+	
+			      byte b[]=new byte[in.available()];
+			      in.read(b,0,b.length);
+			      System.out.println(new String(b));
+	
+			      byte c[]=new byte[err.available()];
+			      err.read(c,0,c.length);
+			      System.out.println(new String(c));
+			}
+		    else if ("GenTestData".equals(e.getActionCommand())) {
+			      System.out.println("Generate Test Data button selected");
+			      proc = Runtime.getRuntime().exec("java -jar -Xmx8192m -Xms8192m .\\lib\\GenerateInputs.jar " + txtConfigFile.getText());
+			      proc.waitFor();
+			      // Then retrieve the process output
+			      in = proc.getInputStream();
+			      err = proc.getErrorStream();
+	
+			      byte b[]=new byte[in.available()];
+			      in.read(b,0,b.length);
+			      System.out.println(new String(b));
+	
+			      byte c[]=new byte[err.available()];
+			      err.read(c,0,c.length);
+			      System.out.println(new String(c)); 
+			      
+			      System.out.println("Test Data Generation Completed");
+			}
+		    else if ("OpnCfgFile".equals(e.getActionCommand())) {
+			      System.out.println("Open Config File button selected");
+			      try {
+			    	  JFileChooser fileChooser = new JFileChooser();
+			    	  FileNameExtensionFilter filter = new FileNameExtensionFilter("Properties Text File","properties");
+			    	  int value = fileChooser.showOpenDialog(null);
+			    	  fileChooser.setFileFilter(filter);
+			    	  if(value == JFileChooser.APPROVE_OPTION){
+			    		  System.out.println("Selected File " + fileChooser.getSelectedFile().getPath());
+			    		  txtConfigFile.setText(fileChooser.getSelectedFile().getPath());
+			    		  mCfgWin = new ManageConfigWindow(fileChooser.getSelectedFile());
+			    		  txtSrcFileLoc.setText(mCfgWin.getCFileLoc());
+			    	  }
+			      }catch (Exception fe) {
+			    	  System.out.println("Exception Occured");
+			      }
+			      
+			}
+	    }catch (Exception ie){
+	    	System.out.println("IO Exception Occured");
 	    }
-	    else if ("GenRepFile".equals(e.getActionCommand())) {
-		      System.out.println("Generate Representation File button selected");
-		}
-	    else if ("GenTestData".equals(e.getActionCommand())) {
-		      System.out.println("Generate Test Data button selected");
-		}
 	  }
 }

@@ -1,10 +1,14 @@
 package tdg;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+
 
 
 public class TDG_ConfiguratorUI extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6214228146388280093L;
 	private TDG_Panel currentPanel;
 	
 	public TDG_ConfiguratorUI() {
