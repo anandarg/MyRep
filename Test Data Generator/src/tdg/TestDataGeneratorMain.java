@@ -17,7 +17,7 @@ public class TestDataGeneratorMain {
 		tdgConfig.setTitle("Test Data Generator");
 		tdgConfig.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		tdgConfig.pack();
-		tdgConfig.setSize(800, 700);
+		tdgConfig.setSize(825, 600);
 		tdgConfig.setVisible(true);
 	    
 	}

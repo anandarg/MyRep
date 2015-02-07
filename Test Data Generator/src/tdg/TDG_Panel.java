@@ -1,14 +1,6 @@
 package tdg;
 
 import javax.swing.JPanel;
-
-import java.awt.Color;
-
-
-
-
-
-
 import javax.swing.JLabel;
 import javax.swing.SpringLayout;
 
@@ -21,10 +13,14 @@ import javax.swing.SwingUtilities;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.InputStream;
 
-import javax.swing.JSeparator;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.UIManager;
+import javax.swing.SwingConstants;
+
+import java.awt.Color;
 
 public class TDG_Panel extends JPanel implements ActionListener{
 	
@@ -32,7 +28,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = -3114058600440465384L;
-	private JLabel lblAppTitle;
 	private JLabel lblSrcFileLoc;
 	private SpringLayout currentLayout;
 	private JTextField txtSrcFileLoc;
@@ -40,47 +35,37 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	private JTextField txtInVarFileLoc;
 	private JTextField txtFuncFileLoc;
 	private JTextField txtRepFileLoc;
-	private JTextField textField;
+	private JTextField txtNbThreads;
 	private JTextField txtConfigFile;
 	private ManageConfigWindow mCfgWin;
 	
 	public TDG_Panel() {
-		setForeground(Color.RED);
-		setBackground(Color.LIGHT_GRAY);
-		
-		
-		
+		setForeground(UIManager.getColor("Panel.foreground"));
+		setBackground(UIManager.getColor("Panel.background"));
+				
 		setupPanel();
+		mCfgWin = new ManageConfigWindow();
 	}
 	
 	private void setupPanel() {
-		
-		
-		lblAppTitle= new JLabel("Test Data Generator");
-		lblAppTitle.setForeground(new Color(0, 0, 255));
-		lblAppTitle.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblSrcFileLoc = new JLabel("Source File Location:");
-		lblSrcFileLoc.setForeground(Color.RED);
+		lblSrcFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		lblSrcFileLoc.setToolTipText("Location of the source code C file ");
 		lblSrcFileLoc.setFont(new Font("Tahoma", Font.BOLD, 12));
 		currentLayout = new SpringLayout();
-		currentLayout.putConstraint(SpringLayout.NORTH, lblAppTitle, 10, SpringLayout.NORTH, this);
-		currentLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, lblAppTitle, 0, SpringLayout.HORIZONTAL_CENTER, this);
 		this.setLayout(currentLayout);
 		currentLayout.putConstraint(SpringLayout.NORTH, lblSrcFileLoc, 89, SpringLayout.NORTH, this);
 		currentLayout.putConstraint(SpringLayout.WEST, lblSrcFileLoc, 10, SpringLayout.WEST, this);
-		
-		this.add(lblAppTitle);
 		this.add(lblSrcFileLoc);
 		
 		JLabel lblGblVarFileLoc = new JLabel("Global Variable File Location:");
-		lblGblVarFileLoc.setForeground(Color.RED);
+		lblGblVarFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		currentLayout.putConstraint(SpringLayout.WEST, lblGblVarFileLoc, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblGblVarFileLoc.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblGblVarFileLoc);
 		
 		JLabel lblInVarFileLoc = new JLabel("Input Variable File Location:");
-		lblInVarFileLoc.setForeground(Color.RED);
+		lblInVarFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		currentLayout.putConstraint(SpringLayout.SOUTH, lblGblVarFileLoc, -16, SpringLayout.NORTH, lblInVarFileLoc);
 		currentLayout.putConstraint(SpringLayout.NORTH, lblInVarFileLoc, 49, SpringLayout.SOUTH, lblSrcFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, lblInVarFileLoc, 0, SpringLayout.WEST, lblSrcFileLoc);
@@ -88,21 +73,21 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		add(lblInVarFileLoc);
 		
 		JLabel lblFuncFileLoc = new JLabel("Function File Location:");
-		lblFuncFileLoc.setForeground(Color.RED);
+		lblFuncFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		currentLayout.putConstraint(SpringLayout.NORTH, lblFuncFileLoc, 18, SpringLayout.SOUTH, lblInVarFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, lblFuncFileLoc, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblFuncFileLoc.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblFuncFileLoc);
 		
 		JLabel lblRepFileLoc = new JLabel("Representation File Location:");
-		lblRepFileLoc.setForeground(Color.RED);
+		lblRepFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		currentLayout.putConstraint(SpringLayout.NORTH, lblRepFileLoc, 18, SpringLayout.SOUTH, lblFuncFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, lblRepFileLoc, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblRepFileLoc.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblRepFileLoc);
 		
 		JLabel lblThreads = new JLabel("Number of Threads:");
-		lblThreads.setForeground(Color.RED);
+		lblThreads.setForeground(UIManager.getColor("Label.foreground"));
 		currentLayout.putConstraint(SpringLayout.NORTH, lblThreads, 18, SpringLayout.SOUTH, lblRepFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, lblThreads, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblThreads.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -143,13 +128,14 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		txtRepFileLoc.setColumns(250);
 		add(txtRepFileLoc);
 		
-		textField = new JTextField();
-		currentLayout.putConstraint(SpringLayout.NORTH, textField, -2, SpringLayout.NORTH, lblThreads);
-		currentLayout.putConstraint(SpringLayout.WEST, textField, 0, SpringLayout.WEST, txtSrcFileLoc);
-		textField.setColumns(5);
-		add(textField);
+		txtNbThreads = new JTextField();
+		currentLayout.putConstraint(SpringLayout.NORTH, txtNbThreads, -2, SpringLayout.NORTH, lblThreads);
+		currentLayout.putConstraint(SpringLayout.WEST, txtNbThreads, 0, SpringLayout.WEST, txtSrcFileLoc);
+		txtNbThreads.setColumns(5);
+		add(txtNbThreads);
 		
 		JButton btnGenInFiles = new JButton("Generate Input Files");
+		currentLayout.putConstraint(SpringLayout.SOUTH, btnGenInFiles, -10, SpringLayout.SOUTH, this);
 		btnGenInFiles.setToolTipText("Generate the input files from the C file.");
 		btnGenInFiles.setToolTipText("Generate the global var, input var and function files from the source C file");
 		btnGenInFiles.setActionCommand("GenInputFiles");
@@ -157,68 +143,75 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		add(btnGenInFiles);
 		
 		JButton btnExit = new JButton("Exit");
-		currentLayout.putConstraint(SpringLayout.SOUTH, btnExit, -10, SpringLayout.SOUTH, this);
+		currentLayout.putConstraint(SpringLayout.NORTH, btnExit, 0, SpringLayout.NORTH, btnGenInFiles);
 		btnExit.setToolTipText("Exit the application");
 		btnExit.setActionCommand("exit");
 		btnExit.addActionListener(this);
 		add(btnExit);
 		
 		JButton btnGenRepFile = new JButton("Generate Representation File");
-		currentLayout.putConstraint(SpringLayout.NORTH, btnGenInFiles, 0, SpringLayout.NORTH, btnGenRepFile);
-		currentLayout.putConstraint(SpringLayout.EAST, btnGenInFiles, -6, SpringLayout.WEST, btnGenRepFile);
-		currentLayout.putConstraint(SpringLayout.EAST, btnGenRepFile, 0, SpringLayout.EAST, btnExit);
+		currentLayout.putConstraint(SpringLayout.NORTH, btnGenRepFile, 0, SpringLayout.NORTH, btnGenInFiles);
+		currentLayout.putConstraint(SpringLayout.WEST, btnGenRepFile, 6, SpringLayout.EAST, btnGenInFiles);
 		btnGenRepFile.setToolTipText("Generate the input files from the C file.");
 		btnGenRepFile.setActionCommand("GenRepFile");
 		btnGenRepFile.addActionListener(this);
 		add(btnGenRepFile);
 		
 		JButton btnGenTestData = new JButton("Generate Test Data");
-		currentLayout.putConstraint(SpringLayout.EAST, btnGenTestData, -105, SpringLayout.EAST, this);
-		currentLayout.putConstraint(SpringLayout.WEST, btnExit, 6, SpringLayout.EAST, btnGenTestData);
-		currentLayout.putConstraint(SpringLayout.NORTH, btnGenTestData, 0, SpringLayout.NORTH, btnExit);
+		currentLayout.putConstraint(SpringLayout.NORTH, btnGenTestData, 0, SpringLayout.NORTH, btnGenInFiles);
+		currentLayout.putConstraint(SpringLayout.WEST, btnGenTestData, 6, SpringLayout.EAST, btnGenRepFile);
 		btnGenTestData.setToolTipText("Generate the input files from the C file.");
 		btnGenTestData.setActionCommand("GenTestData");
 		btnGenTestData.addActionListener(this);
 		add(btnGenTestData);
 		
-		JSeparator separator = new JSeparator();
-		currentLayout.putConstraint(SpringLayout.SOUTH, btnGenRepFile, -6, SpringLayout.NORTH, separator);
-		currentLayout.putConstraint(SpringLayout.NORTH, separator, 21, SpringLayout.SOUTH, textField);
-		currentLayout.putConstraint(SpringLayout.WEST, separator, 10, SpringLayout.WEST, this);
-		currentLayout.putConstraint(SpringLayout.SOUTH, separator, 23, SpringLayout.SOUTH, textField);
-		currentLayout.putConstraint(SpringLayout.EAST, separator, 0, SpringLayout.EAST, btnExit);
-		add(separator);
-		
 		JButton btnSave = new JButton("Save");
+		currentLayout.putConstraint(SpringLayout.SOUTH, btnSave, -10, SpringLayout.SOUTH, this);
+		currentLayout.putConstraint(SpringLayout.WEST, btnGenInFiles, 6, SpringLayout.EAST, btnSave);
+		currentLayout.putConstraint(SpringLayout.WEST, btnSave, 0, SpringLayout.WEST, lblSrcFileLoc);
 		btnSave.addActionListener(this);
-		currentLayout.putConstraint(SpringLayout.NORTH, btnSave, 0, SpringLayout.NORTH, btnGenInFiles);
-		currentLayout.putConstraint(SpringLayout.EAST, btnSave, -6, SpringLayout.WEST, btnGenInFiles);
 		btnSave.setToolTipText("Save the config settings to a properties file");
-		btnSave.setActionCommand("Save");
 		add(btnSave);
 		
 		JButton button = new JButton("Open Config File");
-		button.addActionListener(this);
-		currentLayout.putConstraint(SpringLayout.NORTH, button, 50, SpringLayout.NORTH, this);
 		currentLayout.putConstraint(SpringLayout.EAST, button, 0, SpringLayout.EAST, btnExit);
+		button.addActionListener(this);
 		button.setToolTipText("Open config properties file");
 		button.setActionCommand("OpnCfgFile");
 		add(button);
 		
 		JLabel lblCfgFile = new JLabel("Selected Config File:");
-		currentLayout.putConstraint(SpringLayout.NORTH, lblCfgFile, 3, SpringLayout.NORTH, button);
+		currentLayout.putConstraint(SpringLayout.NORTH, button, -3, SpringLayout.NORTH, lblCfgFile);
+		currentLayout.putConstraint(SpringLayout.NORTH, lblCfgFile, 53, SpringLayout.NORTH, this);
 		currentLayout.putConstraint(SpringLayout.EAST, lblCfgFile, 0, SpringLayout.EAST, lblSrcFileLoc);
 		lblCfgFile.setToolTipText("Location of the config file ");
-		lblCfgFile.setForeground(Color.RED);
+		lblCfgFile.setForeground(UIManager.getColor("Label.foreground"));
 		lblCfgFile.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblCfgFile);
 		
 		txtConfigFile = new JTextField();
-		currentLayout.putConstraint(SpringLayout.NORTH, txtConfigFile, 1, SpringLayout.NORTH, button);
+		currentLayout.putConstraint(SpringLayout.NORTH, txtConfigFile, 51, SpringLayout.NORTH, this);
 		currentLayout.putConstraint(SpringLayout.WEST, txtConfigFile, 0, SpringLayout.WEST, txtSrcFileLoc);
 		currentLayout.putConstraint(SpringLayout.EAST, txtConfigFile, 0, SpringLayout.EAST, txtSrcFileLoc);
 		txtConfigFile.setColumns(250);
 		add(txtConfigFile);
+		
+		JButton btnTransData = new JButton("Transform Test Data");
+		currentLayout.putConstraint(SpringLayout.WEST, btnExit, 6, SpringLayout.EAST, btnTransData);
+		currentLayout.putConstraint(SpringLayout.NORTH, btnTransData, 0, SpringLayout.NORTH, btnGenInFiles);
+		currentLayout.putConstraint(SpringLayout.WEST, btnTransData, 6, SpringLayout.EAST, btnGenTestData);
+		btnTransData.setToolTipText("Transform the test data to create RiBett input file.");
+		btnTransData.setActionCommand("GenTestData");
+		add(btnTransData);
+		
+		JLabel lblTestDataGenerator = new JLabel("Test Data Generator");
+		lblTestDataGenerator.setHorizontalAlignment(SwingConstants.CENTER);
+		currentLayout.putConstraint(SpringLayout.NORTH, lblTestDataGenerator, 10, SpringLayout.NORTH, this);
+		currentLayout.putConstraint(SpringLayout.WEST, lblTestDataGenerator, 291, SpringLayout.WEST, this);
+		lblTestDataGenerator.setToolTipText("");
+		lblTestDataGenerator.setForeground(Color.BLACK);
+		lblTestDataGenerator.setFont(new Font("Chiller", Font.BOLD, 40));
+		add(lblTestDataGenerator);
 		
 		
 	}
@@ -227,6 +220,11 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	    Process proc;
 		InputStream in;
 		InputStream err;
+		JFileChooser fileChooser;
+		FileNameExtensionFilter filter;
+  	  	int value;
+		
+		
 		try {
 	    
 	    
@@ -238,7 +236,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		      System.out.println("Generate Input Files button selected");
 		    }
 		    else if ("GenRepFile".equals(e.getActionCommand())) {
-			      System.out.println("Generate Representation File button selected");
+			      System.out.println("Generate Representation File button selected" + txtConfigFile.getText());
 			      proc = Runtime.getRuntime().exec("java -jar -Xmx8192m -Xms8192m .\\lib\\ComputeChunks.jar " + txtConfigFile.getText());
 			      proc.waitFor();
 			      // Then retrieve the process output
@@ -274,20 +272,48 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		    else if ("OpnCfgFile".equals(e.getActionCommand())) {
 			      System.out.println("Open Config File button selected");
 			      try {
-			    	  JFileChooser fileChooser = new JFileChooser();
-			    	  FileNameExtensionFilter filter = new FileNameExtensionFilter("Properties Text File","properties");
-			    	  int value = fileChooser.showOpenDialog(null);
+			    	  fileChooser = new JFileChooser(".");
+			    	  fileChooser.setAcceptAllFileFilterUsed(false);
+			    	  filter = new FileNameExtensionFilter("Properties","properties");
 			    	  fileChooser.setFileFilter(filter);
+			    	  value = fileChooser.showOpenDialog(this);
 			    	  if(value == JFileChooser.APPROVE_OPTION){
 			    		  System.out.println("Selected File " + fileChooser.getSelectedFile().getPath());
 			    		  txtConfigFile.setText(fileChooser.getSelectedFile().getPath());
-			    		  mCfgWin = new ManageConfigWindow(fileChooser.getSelectedFile());
-			    		  txtSrcFileLoc.setText(mCfgWin.getCFileLoc());
+			    		  mCfgWin.loadProperties(fileChooser.getSelectedFile());
+			    		  this.txtSrcFileLoc.setText(mCfgWin.getCFileLoc());
+			    		  this.txtGblVarFileLoc.setText(mCfgWin.getGlobalVarFileLoc());
+			    		  this.txtInVarFileLoc.setText(mCfgWin.getInputVarFileLoc());
+			    		  this.txtFuncFileLoc.setText(mCfgWin.getFunctionFileLoc());
+			    		  this.txtRepFileLoc.setText(mCfgWin.getRepFileLoc());
+			    		  this.txtNbThreads.setText(mCfgWin.getNbThreads());
 			    	  }
-			      }catch (Exception fe) {
-			    	  System.out.println("Exception Occured");
+			      }catch (Exception ofe) {
+			    	  System.out.println("Open File Exception Occured");
 			      }
-			      
+		    }    
+		    else if ("Save".equals(e.getActionCommand())) {
+			      System.out.println("Save As button selected");
+			      try {
+			    	  mCfgWin.setConfigFile(this.txtConfigFile.getText());
+			    	  mCfgWin.setCFileLoc(this.txtSrcFileLoc.getText());
+			    	  mCfgWin.setGlobalVarFile(this.txtGblVarFileLoc.getText());
+			    	  mCfgWin.setInputvarFileLoc(this.txtInVarFileLoc.getText());
+			    	  mCfgWin.setFunctionFileLoc(this.txtFuncFileLoc.getText());
+			    	  mCfgWin.setRepFileLoc(this.txtRepFileLoc.getText());
+			    	  mCfgWin.setNbThreads(this.txtNbThreads.getText());
+			    	  mCfgWin.saveProperties();
+			    	  mCfgWin.loadProperties(new File(this.txtConfigFile.getText()));
+		    		  this.txtSrcFileLoc.setText(mCfgWin.getCFileLoc());
+		    		  this.txtGblVarFileLoc.setText(mCfgWin.getGlobalVarFileLoc());
+		    		  this.txtInVarFileLoc.setText(mCfgWin.getInputVarFileLoc());
+		    		  this.txtFuncFileLoc.setText(mCfgWin.getFunctionFileLoc());
+		    		  this.txtRepFileLoc.setText(mCfgWin.getRepFileLoc());
+		    		  this.txtNbThreads.setText(mCfgWin.getNbThreads());
+		    		  System.out.println("Saved Config File Refreshed");
+			      }catch (Exception sfe) {
+			    	  System.out.println("Save File Exception Occured");
+			      }     
 			}
 	    }catch (Exception ie){
 	    	System.out.println("IO Exception Occured");
