@@ -20,6 +20,7 @@ public class TestDataGeneratorMain {
 		tdgConfig.setSize(825, 600);
 		tdgConfig.setVisible(true);
 	    
+		
 	}
 
 }
