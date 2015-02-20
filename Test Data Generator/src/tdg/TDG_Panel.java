@@ -38,6 +38,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	private JTextField txtNbThreads;
 	private JTextField txtConfigFile;
 	private ManageConfigWindow mCfgWin;
+	private GenerateInputFiles genInpFiles;
 	
 	public TDG_Panel() {
 		setForeground(UIManager.getColor("Panel.foreground"));
@@ -45,6 +46,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 				
 		setupPanel();
 		mCfgWin = new ManageConfigWindow();
+		genInpFiles = new GenerateInputFiles();
 	}
 	
 	private void setupPanel() {
@@ -234,6 +236,9 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		    } 
 		    else if ("GenInputFiles".equals(e.getActionCommand())) {
 		      System.out.println("Generate Input Files button selected");
+		      genInpFiles.generateGlobalVarFile();
+		      genInpFiles.generateInputVarFile();
+		      genInpFiles.generateFunctionFile();
 		    }
 		    else if ("GenRepFile".equals(e.getActionCommand())) {
 			      System.out.println("Generate Representation File button selected" + txtConfigFile.getText());
