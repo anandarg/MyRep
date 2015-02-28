@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 
 public class ManageConfigWindow {
 
@@ -22,7 +24,13 @@ public class ManageConfigWindow {
 	String inputVarFile = new String("");
 	String repFile = new String("");
 	String nbThreads = new String("");
-	
+	String maxCycles = new  String("");
+	String firstCycle = new String("");
+	String targetStateFile = new String("");
+	String z3InputFile = new String("");
+	String z3Outputfile = new String("");
+	String testDataFile = new String("");
+	String newGlobalVarFile = new String("");
 	public ManageConfigWindow(){
 		
 	}
@@ -38,12 +46,32 @@ public class ManageConfigWindow {
 			ConfigProperties.load(in);
 			cFile = ConfigProperties.getProperty("Cfile");
 			globalVarFile = ConfigProperties.getProperty("GlobalVarFile");
+			if (globalVarFile.isEmpty()) {
+				globalVarFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "GlobalVar.csv";
+				System.out.println(globalVarFile);
+			}
 			inputVarFile = ConfigProperties.getProperty("InputVarFile");
+			if (inputVarFile.isEmpty()) {
+				inputVarFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "InputVar.csv";
+				System.out.println(inputVarFile);
+			}
 			functionFile = ConfigProperties.getProperty("FunctionFile");
+			if (functionFile.isEmpty()) {
+				functionFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Functions.csv";
+				System.out.println(functionFile);
+			}
 			repFile = ConfigProperties.getProperty("SerializationFileNoDNF");
 			nbThreads = ConfigProperties.getProperty("nbThreads");
+			maxCycles = ConfigProperties.getProperty("MaxCycle");
+			firstCycle = ConfigProperties.getProperty("FirstCycle");
+			targetStateFile = ConfigProperties.getProperty("ConditionClauseFile");
+			z3InputFile = ConfigProperties.getProperty("InputForYicesFile");
+			z3Outputfile = ConfigProperties.getProperty("Z3OutputFile");
+			testDataFile = ConfigProperties.getProperty("GeneratedInputFile");
+			newGlobalVarFile = ConfigProperties.getProperty("NewGlobalVarFile");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Please select a valid file");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -55,17 +83,23 @@ public class ManageConfigWindow {
 	 
 		try {
 	 
-			output = new FileOutputStream(confFile);
+			output = new FileOutputStream(this.confFile);
 	 
 			// set the properties value
 			prop.setProperty("Cfile", cFile);
-			prop.setProperty("GlobalVarFile", globalVarFile);
-			prop.setProperty("InputVarFile", inputVarFile);
-			prop.setProperty("FunctionFile", functionFile);
-			prop.setProperty("SerializationFileNoDNF", repFile);
-			prop.setProperty("nbThreads", nbThreads);
-			
-			// save properties to project root folder
+			prop.setProperty("GlobalVarFile", this.globalVarFile);
+			prop.setProperty("InputVarFile", this.inputVarFile);
+			prop.setProperty("FunctionFile", this.functionFile);
+			prop.setProperty("SerializationFileNoDNF", this.repFile);
+			prop.setProperty("nbThreads", this.nbThreads);
+			prop.setProperty("ConditionClauseFile", this.targetStateFile);
+			prop.setProperty("MaxCycle", this.maxCycles);
+			prop.setProperty("FirstCycle", this.firstCycle);
+			prop.setProperty("InputForYicesFile", this.z3InputFile);
+			prop.setProperty("Z3OutputFile", this.z3Outputfile);
+			prop.setProperty("GeneratedInputFile", this.testDataFile);
+			prop.setProperty("NewGlobalVarFile", this.newGlobalVarFile);
+
 			prop.store(output, null);
 			
 		} catch (IOException io) {
@@ -110,6 +144,34 @@ public class ManageConfigWindow {
 		return this.nbThreads;
 	}
 	
+	public String getMaxCycles() {
+		return this.maxCycles;
+	}
+	
+	public String getFirstCycle() {
+		return this.firstCycle;
+	}
+	
+	public String getTargetStateFile() {
+		return this.targetStateFile;
+	}
+	
+	public String getZ3InputFile() {
+		return this.z3InputFile;
+	}
+	
+	public String getZ3Outputfile() {
+		return this.z3Outputfile;
+	}
+	
+	public String getTestDataFile() {
+		return this.testDataFile;
+	}
+	
+	public String getNewGlobalVarFile() {
+		return this.newGlobalVarFile;
+	}
+	
 	public void setConfigFile(String loc){
 		this.confFile = loc;
 	}
@@ -136,5 +198,33 @@ public class ManageConfigWindow {
 	
 	public void setNbThreads(String threads){
 		this.nbThreads = threads;
+	}
+	
+	public void setMaxCycles(String cycles) {
+		this.maxCycles=cycles;
+	}
+	
+	public void setFirstCycle(String cycles) {
+		this.firstCycle = cycles;
+	}
+	
+	public void setTargetStateFile(String loc) {
+		this.targetStateFile = loc;
+	}
+	
+	public void setZ3InputFile(String loc) {
+		this.z3InputFile = loc;
+	}
+	
+	public void setZ3Outputfile(String loc) {
+		this.z3Outputfile = loc;
+	}
+	
+	public void setTestDataFile(String loc) {
+		this.testDataFile = loc;
+	}
+	
+	public void setNewGlobalVarFile(String loc) {
+		this.newGlobalVarFile = loc;
 	}
 }
