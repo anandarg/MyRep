@@ -350,9 +350,9 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		    } 
 		    else if ("GenInputFiles".equals(e.getActionCommand())) {
 		      System.out.println("Generate Input Files button selected");
-		      genInpFiles.generateGlobalVarFile();
-		      genInpFiles.generateInputVarFile();
-		      genInpFiles.generateFunctionFile();
+		      genInpFiles.generateGlobalVarFile(this.txtSrcFileLoc.getText(),this.txtGblVarFileLoc.getText());
+		      genInpFiles.generateInputVarFile(this.txtSrcFileLoc.getText(),this.txtInVarFileLoc.getText());
+		      genInpFiles.generateFunctionFile(this.txtSrcFileLoc.getText(),this.txtFuncFileLoc.getText());
 		    }
 		    else if ("TransTestData".equals(e.getActionCommand())) {
 			      System.out.println("Transform Test Data button selected");
