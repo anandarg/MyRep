@@ -14,8 +14,10 @@ import javax.swing.SwingUtilities;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.List;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.UIManager;
@@ -333,9 +335,13 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-	    Process proc;
-		InputStream in;
-		InputStream err;
+	    Process process;
+	    ProcessBuilder pb;
+	    BufferedReader reader;
+	    List<String> params;
+	    String line;
+		//InputStream in;
+		//InputStream err;
 		JFileChooser fileChooser;
 		FileNameExtensionFilter filter;
   	  	int value;
@@ -360,37 +366,29 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			}
 		    else if ("GenRepFile".equals(e.getActionCommand())) {
 			      System.out.println("Generate Representation File button selected" + txtConfigFile.getText());
-			      proc = Runtime.getRuntime().exec("java -jar -Xmx8192m -Xms8192m .\\lib\\ComputeChunks.jar " + txtConfigFile.getText());
-			      proc.waitFor();
-			      // Then retrieve the process output
-			      in = proc.getInputStream();
-			      err = proc.getErrorStream();
-	
-			      byte b[]=new byte[in.available()];
-			      in.read(b,0,b.length);
-			      System.out.println(new String(b));
-	
-			      byte c[]=new byte[err.available()];
-			      err.read(c,0,c.length);
-			      System.out.println(new String(c));
+			      params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\lib\\ComputeChunks.jar ", txtConfigFile.getText());
+			      pb = new ProcessBuilder(params);
+			      pb.redirectErrorStream(true);
+			      process = pb.start();
+			      reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			      while ((line = reader.readLine()) != null)
+			          System.out.println("tasklist: " + line);
+			      process.waitFor();
+			      
 			}
 		    else if ("GenTestData".equals(e.getActionCommand())) {
 			      System.out.println("Generate Test Data button selected" + " " + txtConfigFile.getText());
 			      if(!txtConfigFile.getText().equals("")) {
 			    	  try {
-			    		  proc = Runtime.getRuntime().exec("java -jar -Xmx8192m -Xms8192m .\\lib\\GenerateInputs.jar " + txtConfigFile.getText());
-					      proc.waitFor();
-					      // Then retrieve the process output
-					      in = proc.getInputStream();
-					      err = proc.getErrorStream();
-			
-					      byte b[]=new byte[in.available()];
-					      in.read(b,0,b.length);
-					      System.out.println(new String(b));
-			
-					      byte c[]=new byte[err.available()];
-					      err.read(c,0,c.length);
-					      System.out.println(new String(c)); 
+				      
+					      params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\lib\\GenerateInputs.jar ", txtConfigFile.getText());
+					      pb = new ProcessBuilder(params);
+					      pb.redirectErrorStream(true);
+					      process = pb.start();
+					      reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+					      while ((line = reader.readLine()) != null)
+					          System.out.println("tasklist: " + line);
+					      process.waitFor();
 					      
 					      System.out.println("Test Data Generation Completed");
 			    	  }
