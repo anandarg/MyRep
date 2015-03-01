@@ -1,7 +1,9 @@
 package tdg;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -42,6 +44,30 @@ public class GenerateInputFiles {
     	    writer.append(';');
     	    writer.append('\n');
      
+    	    BufferedReader br = new BufferedReader(new FileReader(srcfilepath.substring(0, srcfilepath.lastIndexOf(File.separator)) + "\\" + "var.dat"));
+    	    String line;
+    	    int i;
+    	    while ((line = br.readLine()) != null) {
+    	      
+    	    	System.out.println(line);
+    	    	if (line.trim().length() == 0) {
+    	    		continue;
+    	    	}
+    	    	String[] values = line.split("\\t", -1);
+
+    	    	System.out.println("Printing file content:");
+    	    	System.out.println("First field" + values[0] + 
+    	    	   (values.length > 1 ? ", Next field" +  values[1] : " there is no second field"));
+    	    	i=0;
+    	    	while (i < values.length) {
+    	    		writer.append(values[i]);
+    	    		writer.append(";");
+    	    		i++;
+    	    	}
+    	    	writer.append('\n');
+    	    }
+    	    br.close();
+    	    
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
