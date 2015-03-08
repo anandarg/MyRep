@@ -31,6 +31,7 @@ public class ManageConfigWindow {
 	String z3Outputfile = new String("");
 	String testDataFile = new String("");
 	String newGlobalVarFile = new String("");
+	String transTestDataFile = new String("");
 	public ManageConfigWindow(){
 		
 	}
@@ -46,20 +47,34 @@ public class ManageConfigWindow {
 			ConfigProperties.load(in);
 			cFile = ConfigProperties.getProperty("Cfile");
 			globalVarFile = ConfigProperties.getProperty("GlobalVarFile");
-			if (globalVarFile.isEmpty()) {
+			if (globalVarFile == null){
+				globalVarFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "GlobalVar.csv");
+			}
+			else if (globalVarFile.isEmpty()) {
 				globalVarFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "GlobalVar.csv";
-				System.out.println(globalVarFile);
 			}
 			inputVarFile = ConfigProperties.getProperty("InputVarFile");
-			if (inputVarFile.isEmpty()) {
+			if (inputVarFile == null) {
+				inputVarFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "InputVar.csv");
+			}
+			else if (inputVarFile.isEmpty()) {
 				inputVarFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "InputVar.csv";
-				System.out.println(inputVarFile);
 			}
 			functionFile = ConfigProperties.getProperty("FunctionFile");
+			if (functionFile == null){
+				functionFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Functions.csv");
+			}
 			if (functionFile.isEmpty()) {
 				functionFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Functions.csv";
-				System.out.println(functionFile);
 			}
+			transTestDataFile = ConfigProperties.getProperty("TransformedInputFile");
+			if (transTestDataFile == null){
+				transTestDataFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "TransformedInputFile.csv");
+			}
+			else if (transTestDataFile.isEmpty()) {
+				transTestDataFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "TransformedInputFile.csv";
+			}
+			
 			repFile = ConfigProperties.getProperty("SerializationFileNoDNF");
 			nbThreads = ConfigProperties.getProperty("nbThreads");
 			maxCycles = ConfigProperties.getProperty("MaxCycle");
@@ -99,6 +114,7 @@ public class ManageConfigWindow {
 			prop.setProperty("Z3OutputFile", this.z3Outputfile);
 			prop.setProperty("GeneratedInputFile", this.testDataFile);
 			prop.setProperty("NewGlobalVarFile", this.newGlobalVarFile);
+			prop.setProperty("TransformedInputFile", this.transTestDataFile);
 
 			prop.store(output, null);
 			
@@ -172,6 +188,10 @@ public class ManageConfigWindow {
 		return this.newGlobalVarFile;
 	}
 	
+	public String getTransTestDataFile(){
+		return this.transTestDataFile;
+	}
+	
 	public void setConfigFile(String loc){
 		this.confFile = loc;
 	}
@@ -226,5 +246,9 @@ public class ManageConfigWindow {
 	
 	public void setNewGlobalVarFile(String loc) {
 		this.newGlobalVarFile = loc;
+	}
+	
+	public void setTransTestDataFile(String loc){
+		this.transTestDataFile = loc;
 	}
 }

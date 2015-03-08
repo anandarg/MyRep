@@ -43,6 +43,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	private ManageConfigWindow mCfgWin;
 	private GenerateInputFiles genInpFiles;
 	private TransformTestData trnTestData;
+	//private GlbVarRun glbvar;
 	private JTextField txtMaxCycles;
 	private JTextField txtFirstCycle;
 	private JTextField txtZ3InpFileLoc;
@@ -50,6 +51,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	private JTextField txtNewGblVarFileLoc;
 	private JTextField txtZ3OutFileLoc;
 	private JTextField txtTargetFileLoc;
+	private JTextField txtTransTestDataFileLoc;
 	
 	public TDG_Panel() {
 		setForeground(UIManager.getColor("Panel.foreground"));
@@ -59,6 +61,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		mCfgWin = new ManageConfigWindow();
 		genInpFiles = new GenerateInputFiles();
 		trnTestData = new TransformTestData();
+		//glbvar = new GlbVarRun();
 	}
 	
 	private void setupPanel() {
@@ -300,14 +303,14 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		currentLayout.putConstraint(SpringLayout.WEST, txtTestDataFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
 		currentLayout.putConstraint(SpringLayout.EAST, txtTestDataFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		add(txtTestDataFileLoc);
-		txtTestDataFileLoc.setColumns(255);
+		txtTestDataFileLoc.setColumns(250);
 		
 		txtNewGblVarFileLoc = new JTextField();
 		currentLayout.putConstraint(SpringLayout.NORTH, txtNewGblVarFileLoc, -2, SpringLayout.NORTH, lblNewGblVarFile);
 		currentLayout.putConstraint(SpringLayout.WEST, txtNewGblVarFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
 		currentLayout.putConstraint(SpringLayout.EAST, txtNewGblVarFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		add(txtNewGblVarFileLoc);
-		txtNewGblVarFileLoc.setColumns(255);
+		txtNewGblVarFileLoc.setColumns(250);
 		
 		txtZ3OutFileLoc = new JTextField();
 		currentLayout.putConstraint(SpringLayout.NORTH, txtZ3OutFileLoc, -2, SpringLayout.NORTH, lblZ3OutFile);
@@ -330,6 +333,22 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		currentLayout.putConstraint(SpringLayout.EAST, txtTargetFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		add(txtTargetFileLoc);
 		txtTargetFileLoc.setColumns(250);
+		
+		JLabel lblTransTestData = new JLabel("Transformed Test Data File:");
+		currentLayout.putConstraint(SpringLayout.NORTH, lblTransTestData, 18, SpringLayout.SOUTH, lblNewGblVarFile);
+		currentLayout.putConstraint(SpringLayout.WEST, lblTransTestData, 0, SpringLayout.WEST, lblSrcFileLoc);
+		lblTransTestData.setToolTipText("Specify the Test Data File Location");
+		lblTransTestData.setForeground(Color.BLACK);
+		lblTransTestData.setFont(new Font("Tahoma", Font.BOLD, 12));
+		add(lblTransTestData);
+		
+		txtTransTestDataFileLoc = new JTextField();
+		txtTransTestDataFileLoc.setToolTipText("Location for the transformed test data file.");
+		currentLayout.putConstraint(SpringLayout.WEST, txtTransTestDataFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, txtTransTestDataFileLoc, 0, SpringLayout.SOUTH, lblTransTestData);
+		currentLayout.putConstraint(SpringLayout.EAST, txtTransTestDataFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
+		txtTransTestDataFileLoc.setColumns(250);
+		add(txtTransTestDataFileLoc);
 		
 		
 	}
@@ -356,13 +375,17 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		    } 
 		    else if ("GenInputFiles".equals(e.getActionCommand())) {
 		      System.out.println("Generate Input Files button selected");
-		      genInpFiles.generateGlobalVarFile(this.txtSrcFileLoc.getText(),this.txtGblVarFileLoc.getText());
-		      genInpFiles.generateInputVarFile(this.txtSrcFileLoc.getText(),this.txtInVarFileLoc.getText());
-		      genInpFiles.generateFunctionFile(this.txtSrcFileLoc.getText(),this.txtFuncFileLoc.getText());
+//		      genInpFiles.generateFiles(this.txtSrcFileLoc.getText(),this.txtGblVarFileLoc.getText(), 
+//		    		  this.txtInVarFileLoc.getText(),this.txtFuncFileLoc.getText());
+		      String srcfp = this.txtSrcFileLoc.getText();
+		      genInpFiles.genFiles(srcfp.substring(0, srcfp.lastIndexOf(File.separator)),
+		    		  this.txtGblVarFileLoc.getText(), this.txtInVarFileLoc.getText(),this.txtFuncFileLoc.getText());
+		      //genInpFiles.generateInputVarFile(this.txtSrcFileLoc.getText(),this.txtInVarFileLoc.getText());
+		      //genInpFiles.generateFunctionFile(this.txtSrcFileLoc.getText(),this.txtFuncFileLoc.getText());
 		    }
 		    else if ("TransTestData".equals(e.getActionCommand())) {
 			      System.out.println("Transform Test Data button selected");
-			      trnTestData.TransformData();
+			      trnTestData.TransformData(this.txtTestDataFileLoc.getText(), this.txtTransTestDataFileLoc.getText());
 			}
 		    else if ("GenRepFile".equals(e.getActionCommand())) {
 			      System.out.println("Generate Representation File button selected" + txtConfigFile.getText());
@@ -427,6 +450,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			    		  this.txtZ3InpFileLoc.setText(mCfgWin.getZ3InputFile());
 			    		  this.txtZ3OutFileLoc.setText(mCfgWin.getZ3Outputfile());
 			    		  this.txtNewGblVarFileLoc.setText(mCfgWin.getNewGlobalVarFile());
+			    		  this.txtTransTestDataFileLoc.setText(mCfgWin.getTransTestDataFile());
 			    		  
 			    	  }
 			      }catch (Exception ofe) {
@@ -450,6 +474,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			    	  mCfgWin.setZ3InputFile(this.txtZ3InpFileLoc.getText());
 			    	  mCfgWin.setZ3Outputfile(this.txtZ3OutFileLoc.getText());
 			    	  mCfgWin.setNewGlobalVarFile(this.txtNewGblVarFileLoc.getText());
+			    	  mCfgWin.setTransTestDataFile(this.txtTransTestDataFileLoc.getText());
 			    	  
 			    	  mCfgWin.saveProperties();
 			    	  mCfgWin.loadProperties(new File(this.txtConfigFile.getText()));
@@ -466,6 +491,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		    		  this.txtZ3InpFileLoc.setText(mCfgWin.getZ3InputFile());
 		    		  this.txtZ3OutFileLoc.setText(mCfgWin.getZ3Outputfile());
 		    		  this.txtNewGblVarFileLoc.setText(mCfgWin.getNewGlobalVarFile());
+		    		  this.txtTransTestDataFileLoc.setText(mCfgWin.getTransTestDataFile());
 		    		  System.out.println("Saved Config File Refreshed");
 			      }catch (Exception sfe) {
 			    	  System.out.println("Save File Exception Occured");
