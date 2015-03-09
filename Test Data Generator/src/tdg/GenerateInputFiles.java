@@ -37,7 +37,7 @@ public class GenerateInputFiles {
 	//setup file path for the Aspen files
 	private String Aspenfilepath = "";
 	//ring name
-	private static String ringname = "CTO";
+	private static String ringname = "CKP";
 	
 	//End specification of arraylist/hashmap
 	
@@ -149,7 +149,6 @@ public class GenerateInputFiles {
 				bw.newLine();
 				
 				for (FunctionType x:FunctionFile) {
-					
 					bw.write(x.getFuncName() + ",0,true,true");
 					bw.newLine();
 
@@ -268,15 +267,14 @@ public class GenerateInputFiles {
 						
 					  //parses splitvar file one line from file by white spaces includes tab,space,nextline....	
 						splitUpThisString = sLineReader.split("\\s");  // \\s means white space
-						if (splitUpThisString.length >= 2){
+						if (splitUpThisString.length >= 2){				
 						         FuncNameTemp = splitUpThisString[1].trim();
 						         if (FuncNameTemp.length() >= 7){
 						        	 String temp = "Mng" + ringname + "R_";
 								 if (temp.contains(FuncNameTemp.substring(0, 7))){
 										//strip function name from "(void)"
-											splitUpFuncNameString = FuncNameTemp.split("\\(");							
-											dt.setFuncName(splitUpFuncNameString[0].trim());
-
+										splitUpFuncNameString = FuncNameTemp.split("\\(");							
+										dt.setFuncName(splitUpFuncNameString[0].trim());	
 										FunctionFile.add(dt);
 									}
 						         }
@@ -294,10 +292,6 @@ public class GenerateInputFiles {
 				//Close the file
 				br.close();
 			}		
-			
-			for(FunctionType x:FunctionFile){
-				System.out.println(x.getFuncName());
-			}
 		}
 		
 		//=========================================================================================================
