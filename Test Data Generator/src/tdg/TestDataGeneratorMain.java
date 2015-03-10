@@ -1,9 +1,10 @@
 package tdg;
 import javax.swing.JFrame;
 
-public class TestDataGeneratorMain {
+public class TestDataGeneratorMain extends JFrame{
 
-	private TDG_ConfiguratorUI tdgConfig;
+	private static final long serialVersionUID = 1L;
+	private TDG_Panel currentPanel;
 	
 	public static void main(String[] args) {
 		
@@ -12,15 +13,19 @@ public class TestDataGeneratorMain {
 		
 	}
 	
-	public void setupTDGWindow(){
-		tdgConfig = new TDG_ConfiguratorUI();
-		tdgConfig.setTitle("Test Data Generator");
-		tdgConfig.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		tdgConfig.pack();
-		tdgConfig.setSize(825, 600);
-		tdgConfig.setVisible(true);
-	    
+	public void setupTDGWindow() {		
 		
+		currentPanel = new TDG_Panel();
+		setupFrame();
+		this.setTitle("Test Data Generator");
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.pack();
+		this.setSize(825, 600);
+		this.setVisible(true);
+	   	
 	}
-
+	
+	private void setupFrame() {
+		this.setContentPane(currentPanel);
+	}
 }

@@ -48,11 +48,9 @@ public class GenerateInputFiles {
 		this.gblvarfilepath = gfp;
 		this.inputvarfilepath = ifp;
 		this.funclistfilepath = ffp;
-		System.out.println(filepath);
 				
 		//Read cal.dat File and parse into dataFrmCalFile
 		this.readCalFile(this.filepath +"\\cal.dat");
-		System.out.println("Done reading from file "+ this.filepath +"\\cal.dat");
 		//Read calVal.dat File and parse into dataFrmCalValFile
 		this.readCalValFile(this.filepath +"\\calval.dat");
 		//Read splitvar.dat File and parse into datFrmsplitvarFile
@@ -63,7 +61,6 @@ public class GenerateInputFiles {
 		this.readFunctionFile(this.Aspenfilepath + "\\Aspen\\Rte_Runnables.h");
 		
 		//loop thru the calibration list
-		System.out.println("***In varArrayvalue merge data extracted from cal.dat file and calval.dat***");
 		for (DataType x: dataFrmCalFile) {
 			//grab varName		
 			//append data from hm. hashmap into dataFrmCalFile arraylist				
@@ -73,7 +70,6 @@ public class GenerateInputFiles {
 		}
 		//loop thru the variables  list
 		//build new lists. 1st list will contain global variables and second will contain inputs. 
-//				System.out.println("***In varArrayvalue merge data extracted from splitvar.dat file andhasmap***");
 		for (DataType x: SplitVarFile) {
 			//grab varName		
 			//append data from hm. hashmap into GlobalVarList and InputVarList	
@@ -121,7 +117,6 @@ public class GenerateInputFiles {
 				}
 			}
 			bw.close(); 
-			System.out.println("Done");
 			// End outputting into a text file
 			
 		}
@@ -154,7 +149,6 @@ public class GenerateInputFiles {
 
 				}
 				bw.close(); 
-				System.out.println("Done");
 				// End outputting into a text file
 				
 			}
@@ -216,7 +210,6 @@ public class GenerateInputFiles {
 			}	
 			
 			bw.close(); 
-			System.out.println("Done");	
 			// End outputting into a text file
 			
 		} catch (IOException e) {
@@ -489,7 +482,6 @@ public class GenerateInputFiles {
 				}
 			}
 			if (holdValue == null | dt == null) {
-				System.out.println("something is wrong....");
 				dt.setVarName("error");
 				dt.setVarType("error");
 				dt.setVarSize(0);
@@ -537,22 +529,20 @@ public class GenerateInputFiles {
 
 			DataType dt = new DataType();
 			
-//			System.out.println("read line: " + currentLine);
 			String splitUpThisString [] = null;
 			if (!currentLine.isEmpty()) {
 				splitUpThisString = currentLine.split("\\s");
 			}
 			
 			if (splitUpThisString != null) {
-//				System.out.println("length of this string is: " + splitUpThisString.length);
+
 				if (splitUpThisString.length>2) {
 					dt.setVarName(splitUpThisString[1].trim());
 					//Should be the last column
 					dt.setVarValue(Float.parseFloat(splitUpThisString[splitUpThisString.length-1]));
 				}
 				
-			}		
-//			return varName + " " + varVal;	
+			}			
 			return dt;
 
 		}

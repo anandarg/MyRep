@@ -27,9 +27,6 @@ import java.awt.Color;
 
 public class TDG_Panel extends JPanel implements ActionListener{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3114058600440465384L;
 	private JLabel lblSrcFileLoc;
 	private SpringLayout currentLayout;
@@ -370,25 +367,17 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	    
 	    
 			if("exit".equals(e.getActionCommand())) {
-		      System.out.println("exit button selected");
 		      SwingUtilities.getWindowAncestor(this).dispose();
 		    } 
 		    else if ("GenInputFiles".equals(e.getActionCommand())) {
-		      System.out.println("Generate Input Files button selected");
-//		      genInpFiles.generateFiles(this.txtSrcFileLoc.getText(),this.txtGblVarFileLoc.getText(), 
-//		    		  this.txtInVarFileLoc.getText(),this.txtFuncFileLoc.getText());
 		      String srcfp = this.txtSrcFileLoc.getText();
 		      genInpFiles.genFiles(srcfp.substring(0, srcfp.lastIndexOf(File.separator)),
 		    		  this.txtGblVarFileLoc.getText(), this.txtInVarFileLoc.getText(),this.txtFuncFileLoc.getText());
-		      //genInpFiles.generateInputVarFile(this.txtSrcFileLoc.getText(),this.txtInVarFileLoc.getText());
-		      //genInpFiles.generateFunctionFile(this.txtSrcFileLoc.getText(),this.txtFuncFileLoc.getText());
 		    }
 		    else if ("TransTestData".equals(e.getActionCommand())) {
-			      System.out.println("Transform Test Data button selected");
 			      trnTestData.TransformData(this.txtTestDataFileLoc.getText(), this.txtTransTestDataFileLoc.getText());
 			}
 		    else if ("GenRepFile".equals(e.getActionCommand())) {
-			      System.out.println("Generate Representation File button selected" + txtConfigFile.getText());
 			      params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\lib\\ComputeChunks.jar ", txtConfigFile.getText());
 			      pb = new ProcessBuilder(params);
 			      pb.redirectErrorStream(true);
@@ -400,7 +389,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			      
 			}
 		    else if ("GenTestData".equals(e.getActionCommand())) {
-			      System.out.println("Generate Test Data button selected" + " " + txtConfigFile.getText());
 			      if(!txtConfigFile.getText().equals("")) {
 			    	  try {
 				      
@@ -413,7 +401,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 					          System.out.println("tasklist: " + line);
 					      process.waitFor();
 					      
-					      System.out.println("Test Data Generation Completed");
 			    	  }
 			    	  catch (Exception tde)
 			    	  {
@@ -426,7 +413,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			      }
 			}
 		    else if ("OpnCfgFile".equals(e.getActionCommand())) {
-			      System.out.println("Open Config File button selected");
 			      try {
 			    	  fileChooser = new JFileChooser(".");
 			    	  fileChooser.setAcceptAllFileFilterUsed(false);
@@ -434,7 +420,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			    	  fileChooser.setFileFilter(filter);
 			    	  value = fileChooser.showOpenDialog(this);
 			    	  if(value == JFileChooser.APPROVE_OPTION){
-			    		  System.out.println("Selected File " + fileChooser.getSelectedFile().getPath());
+
 			    		  txtConfigFile.setText(fileChooser.getSelectedFile().getPath());
 			    		  mCfgWin.loadProperties(fileChooser.getSelectedFile());
 			    		  this.txtSrcFileLoc.setText(mCfgWin.getCFileLoc());
@@ -458,7 +444,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			      }
 		    }    
 		    else if ("Save".equals(e.getActionCommand())) {
-			      System.out.println("Save As button selected");
 			      try {
 			    	  mCfgWin.setConfigFile(this.txtConfigFile.getText());
 			    	  mCfgWin.setCFileLoc(this.txtSrcFileLoc.getText());
@@ -492,7 +477,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		    		  this.txtZ3OutFileLoc.setText(mCfgWin.getZ3Outputfile());
 		    		  this.txtNewGblVarFileLoc.setText(mCfgWin.getNewGlobalVarFile());
 		    		  this.txtTransTestDataFileLoc.setText(mCfgWin.getTransTestDataFile());
-		    		  System.out.println("Saved Config File Refreshed");
+		    		 
 			      }catch (Exception sfe) {
 			    	  System.out.println("Save File Exception Occured");
 			      }     

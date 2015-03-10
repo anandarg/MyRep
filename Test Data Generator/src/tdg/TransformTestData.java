@@ -14,8 +14,7 @@ public class TransformTestData {
 	}
 	
 	public void TransformData(String srcTestDataFile, String tgtTestDataFile) {
-		System.out.println("Source Test Data file location is " + srcTestDataFile);
-		System.out.println("Target Test Data file location is " + tgtTestDataFile);
+		
 		CharSequence cs = "##";
 		int cycleStart = 0;
 		File file = new File(tgtTestDataFile);
@@ -42,7 +41,7 @@ public class TransformTestData {
     	    		continue;
     	    	}
     	    	else if (line.contains(cs)){
-    	    		System.out.println("Cycle Start value is " + cycleStart);
+    	    		
     	    		if (cycleStart == 0){
     	    			cycleStart = 1;
     	    		}
@@ -64,7 +63,6 @@ public class TransformTestData {
     	    cycleStart = 0;
     	    while ((line = br.readLine()) != null) {
     	      
-    	    	System.out.println(line);
     	    	if (line.trim().length() == 0) {
     	    		continue;
     	    	}
@@ -86,7 +84,6 @@ public class TransformTestData {
     	    
     	    while ((line = br.readLine()) != null) {
     	      
-    	    	System.out.println(line);
     	    	if (line.trim().length() == 0) {
     	    		continue;
     	    	}
