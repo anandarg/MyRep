@@ -40,7 +40,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	private ManageConfigWindow mCfgWin;
 	private GenerateInputFiles genInpFiles;
 	private TransformTestData trnTestData;
-	//private GlbVarRun glbvar;
 	private JTextField txtMaxCycles;
 	private JTextField txtFirstCycle;
 	private JTextField txtZ3InpFileLoc;
@@ -58,7 +57,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		mCfgWin = new ManageConfigWindow();
 		genInpFiles = new GenerateInputFiles();
 		trnTestData = new TransformTestData();
-		//glbvar = new GlbVarRun();
 	}
 	
 	private void setupPanel() {
@@ -143,6 +141,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		add(txtRepFileLoc);
 		
 		txtNbThreads = new JTextField();
+		txtNbThreads.setText("10");
 		currentLayout.putConstraint(SpringLayout.NORTH, txtNbThreads, -2, SpringLayout.NORTH, lblThreads);
 		currentLayout.putConstraint(SpringLayout.WEST, txtNbThreads, 0, SpringLayout.WEST, txtSrcFileLoc);
 		txtNbThreads.setColumns(5);
@@ -277,12 +276,14 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		add(lblNewGblVarFile);
 		
 		txtMaxCycles = new JTextField();
+		txtMaxCycles.setText("15");
 		currentLayout.putConstraint(SpringLayout.NORTH, txtMaxCycles, -2, SpringLayout.NORTH, lblMaxCycles);
 		currentLayout.putConstraint(SpringLayout.WEST, txtMaxCycles, 0, SpringLayout.WEST, txtSrcFileLoc);
 		txtMaxCycles.setColumns(5);
 		add(txtMaxCycles);
 		
 		txtFirstCycle = new JTextField();
+		txtFirstCycle.setText("0");
 		currentLayout.putConstraint(SpringLayout.NORTH, txtFirstCycle, 0, SpringLayout.NORTH, lblFirstCycle);
 		currentLayout.putConstraint(SpringLayout.WEST, txtFirstCycle, 0, SpringLayout.WEST, txtSrcFileLoc);
 		txtFirstCycle.setColumns(5);
@@ -347,6 +348,14 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		txtTransTestDataFileLoc.setColumns(250);
 		add(txtTransTestDataFileLoc);
 		
+		JButton btnOpenCFile = new JButton("Open Source C File");
+		currentLayout.putConstraint(SpringLayout.NORTH, btnOpenCFile, -3, SpringLayout.NORTH, lblSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.EAST, btnOpenCFile, 0, SpringLayout.EAST, btnExit);
+		btnOpenCFile.setToolTipText("Open Source C File");
+		btnOpenCFile.setActionCommand("OpnCFile");
+		btnOpenCFile.addActionListener(this);
+		add(btnOpenCFile);
+		
 		
 	}
 	
@@ -356,8 +365,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	    BufferedReader reader;
 	    List<String> params;
 	    String line;
-		//InputStream in;
-		//InputStream err;
 		JFileChooser fileChooser;
 		FileNameExtensionFilter filter;
   	  	int value;
@@ -442,7 +449,57 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			      }catch (Exception ofe) {
 			    	  System.out.println("Open File Exception Occured");
 			      }
-		    }    
+		    }
+		    else if ("OpnCFile".equals(e.getActionCommand())) {
+			      try {
+			    	  fileChooser = new JFileChooser(".");
+			    	  fileChooser.setAcceptAllFileFilterUsed(false);
+			    	  filter = new FileNameExtensionFilter("C","c");
+			    	  fileChooser.setFileFilter(filter);
+			    	  value = fileChooser.showOpenDialog(this);
+			    	  if(value == JFileChooser.APPROVE_OPTION){
+			    		  
+			    		  String srcFile = fileChooser.getSelectedFile().getPath();
+			    		  txtSrcFileLoc.setText(srcFile);
+			    		  String path = srcFile.substring(0, srcFile.lastIndexOf(File.separator));
+			    		  mCfgWin.setConfigFile(path+ "\\" + "config.properties");
+				    	  mCfgWin.setCFileLoc(this.txtSrcFileLoc.getText());
+				    	  mCfgWin.setGlobalVarFile(path+ "\\" + "GlobalVar.csv");
+				    	  mCfgWin.setInputvarFileLoc(path+ "\\" + "InputVar.csv");
+				    	  mCfgWin.setFunctionFileLoc(path+ "\\" + "Functions.csv");
+				    	  mCfgWin.setRepFileLoc(path+ "\\" + "RefFile_Chunks.ser");
+				    	  mCfgWin.setNbThreads(this.txtNbThreads.getText());
+				    	  mCfgWin.setMaxCycles(this.txtMaxCycles.getText());
+				    	  mCfgWin.setFirstCycle(this.txtFirstCycle.getText());
+				    	  mCfgWin.setTargetStateFile(path+ "\\" + "Target.csv");
+				    	  mCfgWin.setTestDataFile(path+ "\\" + "InputTestData.txt");
+				    	  mCfgWin.setZ3InputFile(path+ "\\" + "Z3Input.txt");
+				    	  mCfgWin.setZ3Outputfile(path+ "\\" + "Z3Output.txt");
+				    	  mCfgWin.setNewGlobalVarFile(path+ "\\" + "PrevGlobalVar.csv");
+				    	  mCfgWin.setTransTestDataFile(path+ "\\" + "TransformedInputFile.csv");
+				    	  
+				    	  mCfgWin.saveProperties();
+				    	  mCfgWin.loadProperties(new File(mCfgWin.getConfigFileLoc()));
+				    	  this.txtConfigFile.setText(mCfgWin.getConfigFileLoc());
+			    		  this.txtSrcFileLoc.setText(mCfgWin.getCFileLoc());
+			    		  this.txtGblVarFileLoc.setText(mCfgWin.getGlobalVarFileLoc());
+			    		  this.txtInVarFileLoc.setText(mCfgWin.getInputVarFileLoc());
+			    		  this.txtFuncFileLoc.setText(mCfgWin.getFunctionFileLoc());
+			    		  this.txtRepFileLoc.setText(mCfgWin.getRepFileLoc());
+			    		  this.txtNbThreads.setText(mCfgWin.getNbThreads());
+			    		  this.txtMaxCycles.setText(mCfgWin.getMaxCycles());
+			    		  this.txtFirstCycle.setText(mCfgWin.getFirstCycle());
+			    		  this.txtTargetFileLoc.setText(mCfgWin.getTargetStateFile());
+			    		  this.txtTestDataFileLoc.setText(mCfgWin.getTestDataFile());
+			    		  this.txtZ3InpFileLoc.setText(mCfgWin.getZ3InputFile());
+			    		  this.txtZ3OutFileLoc.setText(mCfgWin.getZ3Outputfile());
+			    		  this.txtNewGblVarFileLoc.setText(mCfgWin.getNewGlobalVarFile());
+			    		  this.txtTransTestDataFileLoc.setText(mCfgWin.getTransTestDataFile());
+			    	  }
+			      }catch (Exception ofe) {
+			    	  System.out.println("Open File Exception Occured");
+			      }
+		    }		
 		    else if ("Save".equals(e.getActionCommand())) {
 			      try {
 			    	  mCfgWin.setConfigFile(this.txtConfigFile.getText());

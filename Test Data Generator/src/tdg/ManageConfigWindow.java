@@ -46,6 +46,7 @@ public class ManageConfigWindow {
 			FileInputStream in = new FileInputStream(confFile);
 			ConfigProperties.load(in);
 			cFile = ConfigProperties.getProperty("Cfile");
+			
 			globalVarFile = ConfigProperties.getProperty("GlobalVarFile");
 			if (globalVarFile == null){
 				globalVarFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "GlobalVar.csv");
@@ -53,6 +54,7 @@ public class ManageConfigWindow {
 			else if (globalVarFile.isEmpty()) {
 				globalVarFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "GlobalVar.csv";
 			}
+			
 			inputVarFile = ConfigProperties.getProperty("InputVarFile");
 			if (inputVarFile == null) {
 				inputVarFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "InputVar.csv");
@@ -60,6 +62,7 @@ public class ManageConfigWindow {
 			else if (inputVarFile.isEmpty()) {
 				inputVarFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "InputVar.csv";
 			}
+			
 			functionFile = ConfigProperties.getProperty("FunctionFile");
 			if (functionFile == null){
 				functionFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Functions.csv");
@@ -67,6 +70,7 @@ public class ManageConfigWindow {
 			if (functionFile.isEmpty()) {
 				functionFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Functions.csv";
 			}
+			
 			transTestDataFile = ConfigProperties.getProperty("TransformedInputFile");
 			if (transTestDataFile == null){
 				transTestDataFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "TransformedInputFile.csv");
@@ -76,17 +80,60 @@ public class ManageConfigWindow {
 			}
 			
 			repFile = ConfigProperties.getProperty("SerializationFileNoDNF");
+			if (repFile == null){
+				repFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "RepFile_Chunks.ser");
+			}
+			else if (repFile.isEmpty()) {
+				repFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "RepFile_Chunks.ser";
+			}
+			
 			nbThreads = ConfigProperties.getProperty("nbThreads");
 			maxCycles = ConfigProperties.getProperty("MaxCycle");
 			firstCycle = ConfigProperties.getProperty("FirstCycle");
+			
 			targetStateFile = ConfigProperties.getProperty("ConditionClauseFile");
+			if (targetStateFile == null){
+				targetStateFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Target.csv");
+			}
+			else if (targetStateFile.isEmpty()) {
+				targetStateFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Target.csv";
+			}
+			
 			z3InputFile = ConfigProperties.getProperty("InputForYicesFile");
+			if (z3InputFile == null){
+				z3InputFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Z3Input.txt");
+			}
+			else if (z3InputFile.isEmpty()) {
+				z3InputFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Z3Input.txt";
+			}
+			
 			z3Outputfile = ConfigProperties.getProperty("Z3OutputFile");
+			if (z3Outputfile == null){
+				z3Outputfile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Z3Output.txt");
+			}
+			else if (z3Outputfile.isEmpty()) {
+				z3Outputfile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "Z3Output.txt";
+			}
+			
 			testDataFile = ConfigProperties.getProperty("GeneratedInputFile");
+			if (testDataFile == null){
+				testDataFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "InputTestData.txt");
+			}
+			else if (testDataFile.isEmpty()) {
+				testDataFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "InputTestData.txt";
+			}
+			
 			newGlobalVarFile = ConfigProperties.getProperty("NewGlobalVarFile");
+			if (newGlobalVarFile == null){
+				newGlobalVarFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "PrevGlobalVar.csv");
+			}
+			else if (newGlobalVarFile.isEmpty()) {
+				newGlobalVarFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "PrevGlobalVar.csv";
+			}
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Please select a valid file");
+			JOptionPane.showMessageDialog(null, "Please provide path to a valid Source C file");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -102,18 +149,57 @@ public class ManageConfigWindow {
 	 
 			// set the properties value
 			prop.setProperty("Cfile", cFile);
+			if(this.globalVarFile.isEmpty()) {
+				this.globalVarFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "GlobalVar.csv";
+			}
 			prop.setProperty("GlobalVarFile", this.globalVarFile);
+			if(this.inputVarFile.isEmpty()) {
+				this.inputVarFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "InputVar.csv";
+			}
 			prop.setProperty("InputVarFile", this.inputVarFile);
+			
+			if(this.functionFile.isEmpty()) {
+				this.functionFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "Functions.csv";
+			}
 			prop.setProperty("FunctionFile", this.functionFile);
+			
+			if(this.repFile.isEmpty()) {
+				this.repFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "RepFile_Chunks.ser";
+			}
 			prop.setProperty("SerializationFileNoDNF", this.repFile);
+			
 			prop.setProperty("nbThreads", this.nbThreads);
-			prop.setProperty("ConditionClauseFile", this.targetStateFile);
 			prop.setProperty("MaxCycle", this.maxCycles);
 			prop.setProperty("FirstCycle", this.firstCycle);
+			
+			if(this.targetStateFile.isEmpty()) {
+				this.targetStateFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "Target.csv";
+			}
+			prop.setProperty("ConditionClauseFile", this.targetStateFile);
+			
+			if(this.z3InputFile.isEmpty()) {
+				this.z3InputFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "Z3Input.txt";
+			}
 			prop.setProperty("InputForYicesFile", this.z3InputFile);
+			
+			if(this.z3Outputfile.isEmpty()) {
+				this.z3Outputfile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "Z3Output.txt";
+			}
 			prop.setProperty("Z3OutputFile", this.z3Outputfile);
+			
+			if(this.testDataFile.isEmpty()) {
+				this.testDataFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "InputTestData.txt";
+			}
 			prop.setProperty("GeneratedInputFile", this.testDataFile);
+			
+			if(this.newGlobalVarFile.isEmpty()) {
+				this.newGlobalVarFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "PrevGlobalVar.csv";
+			}
 			prop.setProperty("NewGlobalVarFile", this.newGlobalVarFile);
+			
+			if(this.transTestDataFile.isEmpty()) {
+				this.transTestDataFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "TransformedInputFile.csv";
+			}
 			prop.setProperty("TransformedInputFile", this.transTestDataFile);
 
 			prop.store(output, null);
