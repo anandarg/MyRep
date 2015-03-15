@@ -372,33 +372,43 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		
 		try {
 	    
-	    
 			if("exit".equals(e.getActionCommand())) {
-		      SwingUtilities.getWindowAncestor(this).dispose();
+				SwingUtilities.getWindowAncestor(this).dispose();
 		    } 
 		    else if ("GenInputFiles".equals(e.getActionCommand())) {
-		      String srcfp = this.txtSrcFileLoc.getText();
-		      genInpFiles.genFiles(srcfp.substring(0, srcfp.lastIndexOf(File.separator)),
-		    		  this.txtGblVarFileLoc.getText(), this.txtInVarFileLoc.getText(),this.txtFuncFileLoc.getText());
+		    	System.out.println("Generate Input Files Process...Started");
+		    	String srcfp = this.txtSrcFileLoc.getText();
+		    	genInpFiles.genFiles(srcfp.substring(0, srcfp.lastIndexOf(File.separator)),
+		    			this.txtGblVarFileLoc.getText(), this.txtInVarFileLoc.getText(),this.txtFuncFileLoc.getText());
+		    	System.out.println("Generate Input Files Process...Completed");
 		    }
 		    else if ("TransTestData".equals(e.getActionCommand())) {
-			      trnTestData.TransformData(this.txtTestDataFileLoc.getText(), this.txtTransTestDataFileLoc.getText());
+		    	System.out.println("Transform Test Data Process...Started");
+			    trnTestData.TransformData(this.txtTestDataFileLoc.getText(), this.txtTransTestDataFileLoc.getText());
+			    System.out.println("Transform Test Data Process...Completed");
 			}
 		    else if ("GenRepFile".equals(e.getActionCommand())) {
-			      params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\lib\\ComputeChunks.jar ", txtConfigFile.getText());
-			      pb = new ProcessBuilder(params);
-			      pb.redirectErrorStream(true);
-			      process = pb.start();
-			      reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			      while ((line = reader.readLine()) != null)
-			          System.out.println("tasklist: " + line);
-			      process.waitFor();
-			      
+		    	
+		    	if (!this.txtRepFileLoc.getText().isEmpty() && !this.txtConfigFile.getText().isEmpty()){
+		    		System.out.println("Generate Representation File Process...Started");
+			    	params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\lib\\ComputeChunks.jar ", txtConfigFile.getText());
+			    	pb = new ProcessBuilder(params);
+			    	pb.redirectErrorStream(true);
+			    	process = pb.start();
+			    	reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			    	while ((line = reader.readLine()) != null)
+			    		System.out.println("tasklist: " + line);
+			    	process.waitFor();
+			    	System.out.println("Generate Representation File Process...Completed");
+		    	}
+		    	else{
+		    		JOptionPane.showMessageDialog(null, "Please Provide Config File and Represenation File Location");
+		    	}
 			}
 		    else if ("GenTestData".equals(e.getActionCommand())) {
 			      if(!txtConfigFile.getText().equals("")) {
 			    	  try {
-				      
+			    		  System.out.println("Generate Test Data Process...Started");
 					      params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\lib\\GenerateInputs.jar ", txtConfigFile.getText());
 					      pb = new ProcessBuilder(params);
 					      pb.redirectErrorStream(true);
@@ -407,7 +417,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 					      while ((line = reader.readLine()) != null)
 					          System.out.println("tasklist: " + line);
 					      process.waitFor();
-					      
+					      System.out.println("Generate Test Data Process...Completed");
 			    	  }
 			    	  catch (Exception tde)
 			    	  {
@@ -416,7 +426,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			    	  }
 			      }
 			      else {
-			    	  JOptionPane.showMessageDialog(null, "Please Provide Config File Location");
+			    	  JOptionPane.showMessageDialog(null, "Please Provide Location of Config File that has all the parameter values");
 			      }
 			}
 		    else if ("OpnCfgFile".equals(e.getActionCommand())) {
