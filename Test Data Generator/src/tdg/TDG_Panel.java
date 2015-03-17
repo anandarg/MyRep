@@ -391,7 +391,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		    	
 		    	if (!this.txtRepFileLoc.getText().isEmpty() && !this.txtConfigFile.getText().isEmpty()){
 		    		System.out.println("Generate Representation File Process...Started");
-			    	params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\lib\\ComputeChunks.jar ", txtConfigFile.getText());
+			    	params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\TDG_lib\\ComputeChunks.jar ", txtConfigFile.getText());
 			    	pb = new ProcessBuilder(params);
 			    	pb.redirectErrorStream(true);
 			    	process = pb.start();
@@ -409,7 +409,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			      if(!txtConfigFile.getText().equals("")) {
 			    	  try {
 			    		  System.out.println("Generate Test Data Process...Started");
-					      params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\lib\\GenerateInputs.jar ", txtConfigFile.getText());
+					      params = java.util.Arrays.asList("java", "-jar", "-Xmx8192m", ".\\TDG_lib\\GenerateInputs.jar ", txtConfigFile.getText());
 					      pb = new ProcessBuilder(params);
 					      pb.redirectErrorStream(true);
 					      process = pb.start();

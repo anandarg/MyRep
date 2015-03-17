@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project Test Data Generator with libraries in sub-folder">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="C:/TDG.jar">
+            <manifest>
+                <attribute name="Main-Class" value="tdg.TestDataGeneratorMain"/>
+                <attribute name="Class-Path" value=". TDG_lib/ComputeChunks.jar TDG_lib/GenerateInputs.jar"/>
+            </manifest>
+            <fileset dir="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/bin"/>
+            <fileset dir="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/lib"/>
+        </jar>
+        <delete dir="C:/TDG_lib"/>
+        <mkdir dir="C:/TDG_lib"/>
+        <copy file="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/lib/ComputeChunks.jar" todir="C:/TDG_lib"/>
+        <copy file="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/lib/GenerateInputs.jar" todir="C:/TDG_lib"/>
+    </target>
+</project>
