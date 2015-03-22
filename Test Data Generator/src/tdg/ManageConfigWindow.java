@@ -19,6 +19,7 @@ public class ManageConfigWindow {
 	String confFile = new String("");
 	Properties ConfigProperties;
 	String cFile = new  String("");
+	String modCFile = new String("");
 	String functionFile = new String("");
 	String globalVarFile = new String("");
 	String inputVarFile = new String("");
@@ -45,8 +46,14 @@ public class ManageConfigWindow {
 		try {
 			FileInputStream in = new FileInputStream(confFile);
 			ConfigProperties.load(in);
-			cFile = ConfigProperties.getProperty("Cfile");
-			
+			cFile = ConfigProperties.getProperty("OrigCfile");
+			modCFile = ConfigProperties.getProperty("Cfile");
+			if (modCFile == null){
+				modCFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "ModifiedSource.c");
+			}
+			else if (modCFile.isEmpty()) {
+				modCFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "ModifiedSource.c";
+			}
 			globalVarFile = ConfigProperties.getProperty("GlobalVarFile");
 			if (globalVarFile == null){
 				globalVarFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "GlobalVar.csv");
@@ -148,23 +155,27 @@ public class ManageConfigWindow {
 			output = new FileOutputStream(this.confFile);
 	 
 			// set the properties value
-			prop.setProperty("Cfile", cFile);
+			if(this.modCFile.isEmpty()) {
+				this.modCFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "ModifiedSource.c";
+			}
+			prop.setProperty("Cfile", this.modCFile);
+			prop.setProperty("OrigCfile", this.cFile);
 			if(this.globalVarFile.isEmpty()) {
-				this.globalVarFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "GlobalVar.csv";
+				this.globalVarFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "GlobalVar.csv";
 			}
 			prop.setProperty("GlobalVarFile", this.globalVarFile);
 			if(this.inputVarFile.isEmpty()) {
-				this.inputVarFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "InputVar.csv";
+				this.inputVarFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "InputVar.csv";
 			}
 			prop.setProperty("InputVarFile", this.inputVarFile);
 			
 			if(this.functionFile.isEmpty()) {
-				this.functionFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "Functions.csv";
+				this.functionFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "Functions.csv";
 			}
 			prop.setProperty("FunctionFile", this.functionFile);
 			
 			if(this.repFile.isEmpty()) {
-				this.repFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "RepFile_Chunks.ser";
+				this.repFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "RepFile_Chunks.ser";
 			}
 			prop.setProperty("SerializationFileNoDNF", this.repFile);
 			
@@ -173,32 +184,32 @@ public class ManageConfigWindow {
 			prop.setProperty("FirstCycle", this.firstCycle);
 			
 			if(this.targetStateFile.isEmpty()) {
-				this.targetStateFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "Target.csv";
+				this.targetStateFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "Target.csv";
 			}
 			prop.setProperty("ConditionClauseFile", this.targetStateFile);
 			
 			if(this.z3InputFile.isEmpty()) {
-				this.z3InputFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "Z3Input.txt";
+				this.z3InputFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "Z3Input.txt";
 			}
 			prop.setProperty("InputForYicesFile", this.z3InputFile);
 			
 			if(this.z3Outputfile.isEmpty()) {
-				this.z3Outputfile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "Z3Output.txt";
+				this.z3Outputfile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "Z3Output.txt";
 			}
 			prop.setProperty("Z3OutputFile", this.z3Outputfile);
 			
 			if(this.testDataFile.isEmpty()) {
-				this.testDataFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "InputTestData.txt";
+				this.testDataFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "InputTestData.txt";
 			}
 			prop.setProperty("GeneratedInputFile", this.testDataFile);
 			
 			if(this.newGlobalVarFile.isEmpty()) {
-				this.newGlobalVarFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "PrevGlobalVar.csv";
+				this.newGlobalVarFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "PrevGlobalVar.csv";
 			}
 			prop.setProperty("NewGlobalVarFile", this.newGlobalVarFile);
 			
 			if(this.transTestDataFile.isEmpty()) {
-				this.transTestDataFile = cFile.substring(0, cFile.lastIndexOf(File.separator)) + "\\" + "TransformedInputFile.csv";
+				this.transTestDataFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "TransformedInputFile.csv";
 			}
 			prop.setProperty("TransformedInputFile", this.transTestDataFile);
 
@@ -224,6 +235,10 @@ public class ManageConfigWindow {
 	
 	public String getCFileLoc(){
 		return this.cFile;
+	}
+	
+	public String getModCFileLoc(){
+		return this.modCFile;
 	}
 	
 	public String getGlobalVarFileLoc(){
@@ -284,6 +299,10 @@ public class ManageConfigWindow {
 	
 	public void setCFileLoc(String loc){
 		this.cFile = loc;
+	}
+	
+	public void setModCFileLoc(String loc){
+		this.modCFile = loc;
 	}
 	
 	public void setGlobalVarFile(String loc){

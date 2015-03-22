@@ -9,8 +9,7 @@ public class TestDataGeneratorMain extends JFrame{
 	public static void main(String[] args) {
 		
 		TestDataGeneratorMain tdgMain = new TestDataGeneratorMain();
-		tdgMain.setupTDGWindow();
-		
+		tdgMain.setupTDGWindow();		
 	}
 	
 	public void setupTDGWindow() {		
@@ -20,7 +19,7 @@ public class TestDataGeneratorMain extends JFrame{
 		this.setTitle("Test Data Generator");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
-		this.setSize(825, 600);
+		this.setSize(825, 650);
 		this.setVisible(true);
 	   	
 	}

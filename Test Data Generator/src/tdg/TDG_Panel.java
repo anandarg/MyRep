@@ -48,6 +48,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	private JTextField txtZ3OutFileLoc;
 	private JTextField txtTargetFileLoc;
 	private JTextField txtTransTestDataFileLoc;
+	private JTextField txtModSrcFileLoc;
 	
 	public TDG_Panel() {
 		setForeground(UIManager.getColor("Panel.foreground"));
@@ -71,37 +72,36 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		this.add(lblSrcFileLoc);
 		
 		JLabel lblGblVarFileLoc = new JLabel("Global Variable File Location:");
-		lblGblVarFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		currentLayout.putConstraint(SpringLayout.WEST, lblGblVarFileLoc, 0, SpringLayout.WEST, lblSrcFileLoc);
+		lblGblVarFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		lblGblVarFileLoc.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblGblVarFileLoc);
 		
 		JLabel lblInVarFileLoc = new JLabel("Input Variable File Location:");
-		lblInVarFileLoc.setForeground(UIManager.getColor("Label.foreground"));
-		currentLayout.putConstraint(SpringLayout.SOUTH, lblGblVarFileLoc, -16, SpringLayout.NORTH, lblInVarFileLoc);
-		currentLayout.putConstraint(SpringLayout.NORTH, lblInVarFileLoc, 49, SpringLayout.SOUTH, lblSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblGblVarFileLoc, -17, SpringLayout.NORTH, lblInVarFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, lblInVarFileLoc, 0, SpringLayout.WEST, lblSrcFileLoc);
+		lblInVarFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		lblInVarFileLoc.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblInVarFileLoc);
 		
 		JLabel lblFuncFileLoc = new JLabel("Function File Location:");
-		lblFuncFileLoc.setForeground(UIManager.getColor("Label.foreground"));
-		currentLayout.putConstraint(SpringLayout.NORTH, lblFuncFileLoc, 18, SpringLayout.SOUTH, lblInVarFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblInVarFileLoc, -17, SpringLayout.NORTH, lblFuncFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, lblFuncFileLoc, 0, SpringLayout.WEST, lblSrcFileLoc);
+		lblFuncFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		lblFuncFileLoc.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblFuncFileLoc);
 		
 		JLabel lblRepFileLoc = new JLabel("Representation File Location:");
-		lblRepFileLoc.setForeground(UIManager.getColor("Label.foreground"));
-		currentLayout.putConstraint(SpringLayout.NORTH, lblRepFileLoc, 18, SpringLayout.SOUTH, lblFuncFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblFuncFileLoc, -17, SpringLayout.NORTH, lblRepFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, lblRepFileLoc, 0, SpringLayout.WEST, lblSrcFileLoc);
+		lblRepFileLoc.setForeground(UIManager.getColor("Label.foreground"));
 		lblRepFileLoc.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblRepFileLoc);
 		
 		JLabel lblThreads = new JLabel("Number of Threads:");
-		lblThreads.setForeground(UIManager.getColor("Label.foreground"));
-		currentLayout.putConstraint(SpringLayout.NORTH, lblThreads, 18, SpringLayout.SOUTH, lblRepFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblRepFileLoc, -16, SpringLayout.NORTH, lblThreads);
 		currentLayout.putConstraint(SpringLayout.WEST, lblThreads, 0, SpringLayout.WEST, lblSrcFileLoc);
+		lblThreads.setForeground(UIManager.getColor("Label.foreground"));
 		lblThreads.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblThreads);
 		
@@ -115,35 +115,34 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		txtGblVarFileLoc = new JTextField();
 		currentLayout.putConstraint(SpringLayout.NORTH, txtGblVarFileLoc, -2, SpringLayout.NORTH, lblGblVarFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, txtGblVarFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
-		currentLayout.putConstraint(SpringLayout.EAST, txtGblVarFileLoc, -343, SpringLayout.EAST, this);
+		currentLayout.putConstraint(SpringLayout.EAST, txtGblVarFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		txtGblVarFileLoc.setColumns(250);
 		add(txtGblVarFileLoc);
 		
 		txtInVarFileLoc = new JTextField();
 		currentLayout.putConstraint(SpringLayout.NORTH, txtInVarFileLoc, -2, SpringLayout.NORTH, lblInVarFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, txtInVarFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
-		currentLayout.putConstraint(SpringLayout.EAST, txtInVarFileLoc, -343, SpringLayout.EAST, this);
+		currentLayout.putConstraint(SpringLayout.EAST, txtInVarFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		txtInVarFileLoc.setColumns(250);
 		add(txtInVarFileLoc);
 		
 		txtFuncFileLoc = new JTextField();
 		currentLayout.putConstraint(SpringLayout.NORTH, txtFuncFileLoc, -2, SpringLayout.NORTH, lblFuncFileLoc);
-		currentLayout.putConstraint(SpringLayout.WEST, txtFuncFileLoc, 84, SpringLayout.EAST, lblFuncFileLoc);
-		currentLayout.putConstraint(SpringLayout.EAST, txtFuncFileLoc, -343, SpringLayout.EAST, this);
+		currentLayout.putConstraint(SpringLayout.WEST, txtFuncFileLoc, 231, SpringLayout.WEST, this);
+		currentLayout.putConstraint(SpringLayout.EAST, txtFuncFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		txtFuncFileLoc.setColumns(250);
 		add(txtFuncFileLoc);
 		
 		txtRepFileLoc = new JTextField();
-		currentLayout.putConstraint(SpringLayout.NORTH, txtRepFileLoc, 0, SpringLayout.NORTH, lblRepFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, txtRepFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, txtRepFileLoc, 0, SpringLayout.SOUTH, lblRepFileLoc);
 		currentLayout.putConstraint(SpringLayout.EAST, txtRepFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		txtRepFileLoc.setColumns(250);
 		add(txtRepFileLoc);
 		
 		txtNbThreads = new JTextField();
+		currentLayout.putConstraint(SpringLayout.SOUTH, txtNbThreads, 0, SpringLayout.SOUTH, lblThreads);
 		txtNbThreads.setText("10");
-		currentLayout.putConstraint(SpringLayout.NORTH, txtNbThreads, -2, SpringLayout.NORTH, lblThreads);
-		currentLayout.putConstraint(SpringLayout.WEST, txtNbThreads, 0, SpringLayout.WEST, txtSrcFileLoc);
 		txtNbThreads.setColumns(5);
 		add(txtNbThreads);
 		
@@ -228,15 +227,15 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		add(lblTestDataGenerator);
 		
 		JLabel lblMaxCycles = new JLabel("Max Cycles:");
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblThreads, -15, SpringLayout.NORTH, lblMaxCycles);
+		currentLayout.putConstraint(SpringLayout.WEST, lblMaxCycles, 10, SpringLayout.WEST, this);
 		lblMaxCycles.setToolTipText("Specify the maximum cycles for the solver");
-		currentLayout.putConstraint(SpringLayout.NORTH, lblMaxCycles, 14, SpringLayout.SOUTH, lblThreads);
-		currentLayout.putConstraint(SpringLayout.WEST, lblMaxCycles, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblMaxCycles.setForeground(Color.BLACK);
 		lblMaxCycles.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblMaxCycles);
 		
 		JLabel lblFirstCycle = new JLabel("First Cycle:");
-		currentLayout.putConstraint(SpringLayout.NORTH, lblFirstCycle, 13, SpringLayout.SOUTH, lblMaxCycles);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblMaxCycles, -15, SpringLayout.NORTH, lblFirstCycle);
 		currentLayout.putConstraint(SpringLayout.WEST, lblFirstCycle, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblFirstCycle.setToolTipText("Specify the first cycle for the solver");
 		lblFirstCycle.setForeground(Color.BLACK);
@@ -244,7 +243,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		add(lblFirstCycle);
 		
 		JLabel lblInpZ3File = new JLabel("Z3 Input File Location:");
-		currentLayout.putConstraint(SpringLayout.NORTH, lblInpZ3File, 47, SpringLayout.SOUTH, lblFirstCycle);
 		currentLayout.putConstraint(SpringLayout.WEST, lblInpZ3File, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblInpZ3File.setToolTipText("Specify the Z3 Input File Location");
 		lblInpZ3File.setForeground(Color.BLACK);
@@ -252,15 +250,15 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		add(lblInpZ3File);
 		
 		JLabel lblZ3OutFile = new JLabel("Z3 Output File Location:");
-		currentLayout.putConstraint(SpringLayout.NORTH, lblZ3OutFile, 18, SpringLayout.SOUTH, lblInpZ3File);
-		currentLayout.putConstraint(SpringLayout.WEST, lblZ3OutFile, 10, SpringLayout.WEST, this);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblInpZ3File, -17, SpringLayout.NORTH, lblZ3OutFile);
+		currentLayout.putConstraint(SpringLayout.WEST, lblZ3OutFile, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblZ3OutFile.setToolTipText("Specify the Z3 Output File Location");
 		lblZ3OutFile.setForeground(Color.BLACK);
 		lblZ3OutFile.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblZ3OutFile);
 		
 		JLabel lblInpTestDataFile = new JLabel("Test Data File Location:");
-		currentLayout.putConstraint(SpringLayout.NORTH, lblInpTestDataFile, 15, SpringLayout.SOUTH, lblZ3OutFile);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblZ3OutFile, -18, SpringLayout.NORTH, lblInpTestDataFile);
 		currentLayout.putConstraint(SpringLayout.WEST, lblInpTestDataFile, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblInpTestDataFile.setToolTipText("Specify the Test Data File Location");
 		lblInpTestDataFile.setForeground(Color.BLACK);
@@ -268,7 +266,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		add(lblInpTestDataFile);
 		
 		JLabel lblNewGblVarFile = new JLabel("New Global Var File Location:");
-		currentLayout.putConstraint(SpringLayout.NORTH, lblNewGblVarFile, 20, SpringLayout.SOUTH, lblInpTestDataFile);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblInpTestDataFile, -14, SpringLayout.NORTH, lblNewGblVarFile);
 		currentLayout.putConstraint(SpringLayout.WEST, lblNewGblVarFile, 0, SpringLayout.WEST, lblSrcFileLoc);
 		lblNewGblVarFile.setToolTipText("Specify the File Location for New Global Variables");
 		lblNewGblVarFile.setForeground(Color.BLACK);
@@ -276,22 +274,23 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		add(lblNewGblVarFile);
 		
 		txtMaxCycles = new JTextField();
-		txtMaxCycles.setText("15");
-		currentLayout.putConstraint(SpringLayout.NORTH, txtMaxCycles, -2, SpringLayout.NORTH, lblMaxCycles);
+		currentLayout.putConstraint(SpringLayout.EAST, txtNbThreads, 0, SpringLayout.EAST, txtMaxCycles);
 		currentLayout.putConstraint(SpringLayout.WEST, txtMaxCycles, 0, SpringLayout.WEST, txtSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, txtMaxCycles, 0, SpringLayout.SOUTH, lblMaxCycles);
+		txtMaxCycles.setText("15");
 		txtMaxCycles.setColumns(5);
 		add(txtMaxCycles);
 		
 		txtFirstCycle = new JTextField();
-		txtFirstCycle.setText("0");
-		currentLayout.putConstraint(SpringLayout.NORTH, txtFirstCycle, 0, SpringLayout.NORTH, lblFirstCycle);
 		currentLayout.putConstraint(SpringLayout.WEST, txtFirstCycle, 0, SpringLayout.WEST, txtSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, txtFirstCycle, 0, SpringLayout.SOUTH, lblFirstCycle);
+		txtFirstCycle.setText("0");
 		txtFirstCycle.setColumns(5);
 		add(txtFirstCycle);
 		
 		txtZ3InpFileLoc = new JTextField();
-		currentLayout.putConstraint(SpringLayout.NORTH, txtZ3InpFileLoc, -2, SpringLayout.NORTH, lblInpZ3File);
 		currentLayout.putConstraint(SpringLayout.WEST, txtZ3InpFileLoc, 231, SpringLayout.WEST, this);
+		currentLayout.putConstraint(SpringLayout.SOUTH, txtZ3InpFileLoc, 0, SpringLayout.SOUTH, lblInpZ3File);
 		currentLayout.putConstraint(SpringLayout.EAST, txtZ3InpFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		add(txtZ3InpFileLoc);
 		txtZ3InpFileLoc.setColumns(250);
@@ -304,47 +303,49 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		txtTestDataFileLoc.setColumns(250);
 		
 		txtNewGblVarFileLoc = new JTextField();
-		currentLayout.putConstraint(SpringLayout.NORTH, txtNewGblVarFileLoc, -2, SpringLayout.NORTH, lblNewGblVarFile);
+		currentLayout.putConstraint(SpringLayout.NORTH, lblNewGblVarFile, 2, SpringLayout.NORTH, txtNewGblVarFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, txtNewGblVarFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
 		currentLayout.putConstraint(SpringLayout.EAST, txtNewGblVarFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		add(txtNewGblVarFileLoc);
 		txtNewGblVarFileLoc.setColumns(250);
 		
 		txtZ3OutFileLoc = new JTextField();
-		currentLayout.putConstraint(SpringLayout.NORTH, txtZ3OutFileLoc, -2, SpringLayout.NORTH, lblZ3OutFile);
 		currentLayout.putConstraint(SpringLayout.WEST, txtZ3OutFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, txtZ3OutFileLoc, 0, SpringLayout.SOUTH, lblZ3OutFile);
 		currentLayout.putConstraint(SpringLayout.EAST, txtZ3OutFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		add(txtZ3OutFileLoc);
 		txtZ3OutFileLoc.setColumns(250);
 		
 		JLabel lblTargetFileLoc = new JLabel("Target State File Location:");
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblFirstCycle, -17, SpringLayout.NORTH, lblTargetFileLoc);
 		currentLayout.putConstraint(SpringLayout.WEST, lblTargetFileLoc, 0, SpringLayout.WEST, lblSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblTargetFileLoc, -18, SpringLayout.NORTH, lblInpZ3File);
 		lblTargetFileLoc.setToolTipText("Specify the Target State File Location");
 		lblTargetFileLoc.setForeground(Color.BLACK);
 		lblTargetFileLoc.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblTargetFileLoc);
 		
 		txtTargetFileLoc = new JTextField();
-		currentLayout.putConstraint(SpringLayout.NORTH, lblTargetFileLoc, 2, SpringLayout.NORTH, txtTargetFileLoc);
-		currentLayout.putConstraint(SpringLayout.NORTH, txtTargetFileLoc, 6, SpringLayout.SOUTH, txtFirstCycle);
 		currentLayout.putConstraint(SpringLayout.WEST, txtTargetFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, txtTargetFileLoc, 0, SpringLayout.SOUTH, lblTargetFileLoc);
 		currentLayout.putConstraint(SpringLayout.EAST, txtTargetFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
 		add(txtTargetFileLoc);
 		txtTargetFileLoc.setColumns(250);
 		
 		JLabel lblTransTestData = new JLabel("Transformed Test Data File:");
-		currentLayout.putConstraint(SpringLayout.NORTH, lblTransTestData, 18, SpringLayout.SOUTH, lblNewGblVarFile);
 		currentLayout.putConstraint(SpringLayout.WEST, lblTransTestData, 0, SpringLayout.WEST, lblSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.SOUTH, lblTransTestData, -17, SpringLayout.NORTH, btnGenInFiles);
 		lblTransTestData.setToolTipText("Specify the Test Data File Location");
 		lblTransTestData.setForeground(Color.BLACK);
 		lblTransTestData.setFont(new Font("Tahoma", Font.BOLD, 12));
 		add(lblTransTestData);
 		
 		txtTransTestDataFileLoc = new JTextField();
-		txtTransTestDataFileLoc.setToolTipText("Location for the transformed test data file.");
+		currentLayout.putConstraint(SpringLayout.SOUTH, txtNewGblVarFileLoc, -13, SpringLayout.NORTH, txtTransTestDataFileLoc);
+		currentLayout.putConstraint(SpringLayout.NORTH, txtTransTestDataFileLoc, -2, SpringLayout.NORTH, lblTransTestData);
 		currentLayout.putConstraint(SpringLayout.WEST, txtTransTestDataFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
-		currentLayout.putConstraint(SpringLayout.SOUTH, txtTransTestDataFileLoc, 0, SpringLayout.SOUTH, lblTransTestData);
 		currentLayout.putConstraint(SpringLayout.EAST, txtTransTestDataFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
+		txtTransTestDataFileLoc.setToolTipText("Location for the transformed test data file.");
 		txtTransTestDataFileLoc.setColumns(250);
 		add(txtTransTestDataFileLoc);
 		
@@ -355,6 +356,21 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		btnOpenCFile.setActionCommand("OpnCFile");
 		btnOpenCFile.addActionListener(this);
 		add(btnOpenCFile);
+		
+		JLabel lblModSrcFile = new JLabel("Modified Source File Location:");
+		currentLayout.putConstraint(SpringLayout.WEST, lblModSrcFile, 0, SpringLayout.WEST, lblSrcFileLoc);
+		lblModSrcFile.setToolTipText("Location of the modified source code C file ");
+		lblModSrcFile.setForeground(Color.BLACK);
+		lblModSrcFile.setFont(new Font("Tahoma", Font.BOLD, 12));
+		add(lblModSrcFile);
+		
+		txtModSrcFileLoc = new JTextField();
+		currentLayout.putConstraint(SpringLayout.NORTH, txtModSrcFileLoc, 21, SpringLayout.SOUTH, txtSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.NORTH, lblModSrcFile, 2, SpringLayout.NORTH, txtModSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.WEST, txtModSrcFileLoc, 0, SpringLayout.WEST, txtSrcFileLoc);
+		currentLayout.putConstraint(SpringLayout.EAST, txtModSrcFileLoc, 0, SpringLayout.EAST, txtSrcFileLoc);
+		txtModSrcFileLoc.setColumns(250);
+		add(txtModSrcFileLoc);
 		
 		
 	}
@@ -374,13 +390,15 @@ public class TDG_Panel extends JPanel implements ActionListener{
 	    
 			if("exit".equals(e.getActionCommand())) {
 				SwingUtilities.getWindowAncestor(this).dispose();
+				System.exit(0);
 		    } 
 		    else if ("GenInputFiles".equals(e.getActionCommand())) {
 		    	System.out.println("Generate Input Files Process...Started");
 		    	String srcfp = this.txtSrcFileLoc.getText();
-		    	genInpFiles.genFiles(srcfp.substring(0, srcfp.lastIndexOf(File.separator)),
+		    	genInpFiles.genFiles(srcfp.substring(0, srcfp.lastIndexOf("\\Software")),
 		    			this.txtGblVarFileLoc.getText(), this.txtInVarFileLoc.getText(),this.txtFuncFileLoc.getText());
 		    	System.out.println("Generate Input Files Process...Completed");
+		    	System.out.println("Update Source File path in config file and save");
 		    }
 		    else if ("TransTestData".equals(e.getActionCommand())) {
 		    	System.out.println("Transform Test Data Process...Started");
@@ -441,6 +459,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			    		  txtConfigFile.setText(fileChooser.getSelectedFile().getPath());
 			    		  mCfgWin.loadProperties(fileChooser.getSelectedFile());
 			    		  this.txtSrcFileLoc.setText(mCfgWin.getCFileLoc());
+			    		  this.txtModSrcFileLoc.setText(mCfgWin.getModCFileLoc());
 			    		  this.txtGblVarFileLoc.setText(mCfgWin.getGlobalVarFileLoc());
 			    		  this.txtInVarFileLoc.setText(mCfgWin.getInputVarFileLoc());
 			    		  this.txtFuncFileLoc.setText(mCfgWin.getFunctionFileLoc());
@@ -471,9 +490,11 @@ public class TDG_Panel extends JPanel implements ActionListener{
 			    		  
 			    		  String srcFile = fileChooser.getSelectedFile().getPath();
 			    		  txtSrcFileLoc.setText(srcFile);
-			    		  String path = srcFile.substring(0, srcFile.lastIndexOf(File.separator));
+			    		  //String path = srcFile.substring(0, srcFile.lastIndexOf(File.separator));
+			    		  String path = srcFile.substring(0, srcFile.lastIndexOf("\\Software"));
 			    		  mCfgWin.setConfigFile(path+ "\\" + "config.properties");
 				    	  mCfgWin.setCFileLoc(this.txtSrcFileLoc.getText());
+				    	  mCfgWin.setModCFileLoc(path+ "\\" + "ModifiedSource.c");
 				    	  mCfgWin.setGlobalVarFile(path+ "\\" + "GlobalVar.csv");
 				    	  mCfgWin.setInputvarFileLoc(path+ "\\" + "InputVar.csv");
 				    	  mCfgWin.setFunctionFileLoc(path+ "\\" + "Functions.csv");
@@ -492,6 +513,7 @@ public class TDG_Panel extends JPanel implements ActionListener{
 				    	  mCfgWin.loadProperties(new File(mCfgWin.getConfigFileLoc()));
 				    	  this.txtConfigFile.setText(mCfgWin.getConfigFileLoc());
 			    		  this.txtSrcFileLoc.setText(mCfgWin.getCFileLoc());
+			    		  this.txtModSrcFileLoc.setText(mCfgWin.getModCFileLoc());
 			    		  this.txtGblVarFileLoc.setText(mCfgWin.getGlobalVarFileLoc());
 			    		  this.txtInVarFileLoc.setText(mCfgWin.getInputVarFileLoc());
 			    		  this.txtFuncFileLoc.setText(mCfgWin.getFunctionFileLoc());

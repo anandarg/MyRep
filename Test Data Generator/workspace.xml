@@ -9,11 +9,11 @@
                 <attribute name="Class-Path" value=". TDG_lib/ComputeChunks.jar TDG_lib/GenerateInputs.jar"/>
             </manifest>
             <fileset dir="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/bin"/>
-            <fileset dir="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/lib"/>
+            <fileset dir="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/TDG_lib"/>
         </jar>
         <delete dir="C:/TDG_lib"/>
         <mkdir dir="C:/TDG_lib"/>
-        <copy file="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/lib/ComputeChunks.jar" todir="C:/TDG_lib"/>
-        <copy file="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/lib/GenerateInputs.jar" todir="C:/TDG_lib"/>
+        <copy file="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/TDG_lib/ComputeChunks.jar" todir="C:/TDG_lib"/>
+        <copy file="C:/Users/MZGTCP/Documents/GitHub/MyRep/Test Data Generator/TDG_lib/GenerateInputs.jar" todir="C:/TDG_lib"/>
     </target>
 </project>

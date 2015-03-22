@@ -1,11 +1,14 @@
 package tdg;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
@@ -15,16 +18,28 @@ import java.io.FileWriter;
 public class GenerateInputFiles {
 		
 	//Specify arraylist/hashmap where data will be temporarily stored
-	private static ArrayList<DataType> dataFrmCalFile = new ArrayList<DataType>(); 
+	//Prep list of Data types
+	private static ArrayList<GMDataType> GMTypeList = new ArrayList<GMDataType>();
+	private static HashMap<String, String> gmthm = new HashMap<String, String>();
+	
+	//Specify arraylist where type data will be temporarily stored
+	private static ArrayList<DataType> dataFrmTypesFile = new ArrayList<DataType>(); 
+	
+	//Specify arraylist where type data will be temporarily stored
+	//private static ArrayList<DataType> dataFrmLIBSFile = new ArrayList<DataType>(); 
+	
+	//Prep list of calibrations. Will later be joined with global variables
+	private static ArrayList<DataType> dataFrmCalFile = new ArrayList<DataType>(); 	
 	private static ArrayList<DataType> datFrmCalValFile = new ArrayList<DataType>();
 	private static HashMap<String,ArrayList<Float>> hm = new HashMap<String,ArrayList<Float>>();
-	//End specification of arraylist/hashmap
+	
+	//Prep list of enumerated constants. Will later be joined with global variables
+	private static ArrayList<DataType> EnumFile = new ArrayList<DataType>();	
+	private static ArrayList<FunctionType> FunctionFile = new ArrayList<FunctionType>();
+	//Prep list of global variables and input variables. 
+	
 	private static ArrayList<DataType> SplitVarFile = new ArrayList<DataType>();
 	private static HashMap<String, Integer> vhm = new HashMap<String, Integer>();
-	
-	private static ArrayList<DataType> EnumFile = new ArrayList<DataType>();
-	
-	private static ArrayList<FunctionType> FunctionFile = new ArrayList<FunctionType>();
 	
 	//setup file path for the input files
 	private String filepath = "";
@@ -36,15 +51,21 @@ public class GenerateInputFiles {
 	private String funclistfilepath = "";
 	//setup file path for the Aspen files
 	private String Aspenfilepath = "";
+	//Library, c_types path
+	private String LIBfilepath = "";
+	//setup file path for the data type files
+	private String GMDTfilepath = "";
 	//ring name
 	private static String ringname = "CKP";
 	
 	//End specification of arraylist/hashmap
 	
 	public void genFiles(String fp, String gfp, String ifp, String ffp) throws IOException	{
-		
+		System.out.println(fp);
 		this.filepath = fp;
-		this.Aspenfilepath = fp;
+		this.Aspenfilepath = fp+"\\Aspen";
+		this.LIBfilepath = fp+"\\Software\\Libraries\\LIBS_FUNC";
+		this.GMDTfilepath = fp;
 		this.gblvarfilepath = gfp;
 		this.inputvarfilepath = ifp;
 		this.funclistfilepath = ffp;
@@ -58,7 +79,9 @@ public class GenerateInputFiles {
 		//Read enum.dat File and parse into EnumFile 
 		this.readEnumFile(this.filepath +"\\enum.dat");
 		//Read Rte_Runnables.h file to extract functions called from master scheduler
-		this.readFunctionFile(this.Aspenfilepath + "\\Aspen\\Rte_Runnables.h");
+		this.readFunctionFile(this.Aspenfilepath + "\\Rte_Runnables.h");
+		//Read t_scaled.h File and parse into dataFrmCalFile
+		this.readScaledDTFile(this.LIBfilepath +"\\LIBR_FUNC\\C_Types\\t_scaled.h");
 		
 		//loop thru the calibration list
 		for (DataType x: dataFrmCalFile) {
@@ -86,9 +109,104 @@ public class GenerateInputFiles {
 		writeToInputVarCSV();
 		writeToFuncFileCSV();
 
+		//Prepare GM Data Type to int/float type list
+		GMDataTypeList();
+		
+		this.readDataTypeFile(GMDTfilepath +"\\GMDataType.txt");
+//		glbvar.readCvrtFuncFile(LIBfilepath + "LIBR_FUNC/MATH/MATH_CVT/mathpcvt.h");
+//		glbvar.readCvrtFuncFile(LIBfilepath + "FLTR_FUNC/FLTR_Math/FLTR_CVR_Conversion/fltrpcvr.h");
+		System.out.println("Done reading GMDataType.txt");
+		//populate data types into the arraylist and use it later for replacement
+//		glbvar.readGMDTFile(GMDTfilepath +"types.dat");			
+		//Read source code File and parse into dataFrmCalFile
+		this.readSourceFile(filepath + "\\Software\\Product_Software\\CTOR_BaseFUNC\\ctormaut.c");
+
+	}
+	
+	//=========================================================================================================
+	//=========================================================================================================	
+	//Read GM Data types into arraylist
+	private void readDataTypeFile(String filename) throws IOException{
+		
+		//Read the file line by line
+		String sLineReader = null;
+		BufferedReader br = null;
+		try {
+			//Setup the reader/scanner with file want to read from
+			br = new BufferedReader(new FileReader(filename));
+			while ((sLineReader=br.readLine()) != null) {
+				//Do not read lines that are empty
+				if (!sLineReader.isEmpty()) {
+					
+					DataType dt = new DataType();
+					String splitUpThisString [] = null;
+					
+				  //parses GM data type file one line from file by white spaces includes tab,space,nextline....	
+					splitUpThisString = sLineReader.split("\\s");  // \\s means white space
+                    dt.setGMType(splitUpThisString[0].trim());
+                    dt.setTGDType(splitUpThisString[1].trim());
+                    dataFrmTypesFile.add(dt);
+
+					}
+				}
+		
+		} catch (FileNotFoundException e) { //Should do multi-catch
+			//usually log this or do some system output to console
+		} catch (IOException e) {
+			//usually log this or do some system output to console
+		}  finally {
+			//Close the file
+			br.close();
+		}		
 		
 	}
 	
+    //===========================================================================================================
+	//=============================================================================================================
+	private void readSourceFile(String filename) throws IOException {
+		//Initialize Read from file 
+		FileInputStream fstream = new FileInputStream(filename);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+		String strLine; 
+		String replacedStrLine = null;
+		
+//				//Initialize output file
+		File outfile = new File(GMDTfilepath + "\\ModifiedSource.c");				
+		// if file doesn't exist, then create it
+		if (!outfile.exists()) {
+			outfile.createNewFile();
+		}
+		FileWriter fw = new FileWriter(outfile.getAbsoluteFile());
+		BufferedWriter bw = new BufferedWriter(fw);
+		
+		//Read File Line By Line
+		while((strLine = br.readLine()) != null){
+			//Loop through all the types and Replace GM Type with int/float:
+//					for (DataType x: dataFrmTypesFile) {
+//						System.out.println(x.getGMType()+": " + x.getMinRange() + ": " + x.getMaxRange());
+//					}
+			replacedStrLine = strLine;
+			for (DataType x:dataFrmTypesFile){
+				String tmp1 = x.getGMType().trim();
+				String tmp2 = x.getTGDType().trim();
+				if (replacedStrLine.contains(tmp1)){
+					replacedStrLine = replacedStrLine.replace(tmp1,tmp2);
+				}
+					
+				//System.out.println(tmp1 + tmp2);
+				//replacedStrLine = strLine.replace("TbBOOLEAN", "int");
+			}
+//					ReplaceCvrtFunc(replacedStrLine);
+			bw.write(replacedStrLine);
+			bw.newLine();	
+			//System.out.println(replacedStrLine);
+		}
+		
+		br.close();
+		bw.close();
+		
+	}
+
 	//===THis function writes Input data into CSV File==========================================================
 	public void writeToInputVarCSV() throws IOException{
 			
@@ -216,6 +334,54 @@ public class GenerateInputFiles {
 			e.printStackTrace();
 		}
 		}	
+		//===========================================================================================================
+		//===========================================================================================================
+		// This function reads scaled file and converts GM data type names that have non-standard names into int/float
+		public void readScaledDTFile(String filename) throws IOException {
+			
+			//Read the file line by line
+			String sLineReader = null;
+			BufferedReader br = null;
+			try {
+				//Setup the reader/scanner with file want to read from
+				br = new BufferedReader(new FileReader(filename));
+				while ((sLineReader=br.readLine()) != null) {
+					
+					//Do not read lines that are empty
+					if (sLineReader.startsWith("typedef")) {					
+
+						String splitUpThisString [] = null;
+						
+					  //parses splitvar file one line from file by white spaces includes tab,space,nextline....	
+						splitUpThisString = sLineReader.split("\\s+");      // \\s means white space						
+						String GMTypetemp1 = splitUpThisString[1].trim();   //GM Type
+						String GMTypetemp2 = splitUpThisString[2].trim();   //GM Type scaled
+						GMTypetemp2 = GMTypetemp2.replaceAll("\\;", "");
+						String TGDTypetemp = null;
+							
+						if ("00".contains(GMTypetemp1.substring(GMTypetemp1.length()-2, GMTypetemp1.length())) ||
+	    					!"_".contains(GMTypetemp1.substring(GMTypetemp1.length()-3, GMTypetemp1.length() - 2)) &&
+							!"_".contains(GMTypetemp1.substring(GMTypetemp1.length()-4, GMTypetemp1.length() - 3))) {
+								    TGDTypetemp = "int";
+							 }
+						else {
+								    TGDTypetemp = "float";
+							 } 
+
+		                    gmthm.put(GMTypetemp2, TGDTypetemp);
+						}
+						}
+			
+			} catch (FileNotFoundException e) { //Should do multi-catch
+				//usually log this or do some system output to console
+			} catch (IOException e) {
+				//usually log this or do some system output to console
+			}  finally {
+				//Close the file
+				br.close();
+			}				
+		}
+		
 	    //========================================================================================================
 		//==THis method is takes GM type as an input and returns int or float
 		public static String checkType(String GMType){
@@ -241,6 +407,114 @@ public class GenerateInputFiles {
 		}
 		//=========================================================================================================
 		//=========================================================================================================	
+		//==This method is outputs file that has GM type and assigns int/float
+		public void GMDataTypeList() throws IOException{	
+		
+		    //Read types.dat file and populate GMTypeList arraylist
+			//Read the file line by line
+			String sLineReader = null;
+			BufferedReader br = null;
+			try {
+				//Setup the reader/scanner with file want to read from
+				br = new BufferedReader(new FileReader(filepath +"\\types.dat"));
+				while ((sLineReader=br.readLine()) != null) {
+					//Have a method to parse each line
+					//Then store this information into some array/collection
+					parserGMDT(sLineReader);			
+				}			
+			} catch (FileNotFoundException e) { //Should do multi-catch
+				//usually log this or do some system output to console
+			} catch (IOException e) {
+				//usually log this or do some system output to console
+			}  finally {
+				//Close the file
+				br.close();
+			}
+			
+			java.util.Iterator<Entry<String, String>> it = gmthm.entrySet().iterator();
+			GMDataType dt = new GMDataType();
+		    while (it.hasNext()) {
+		    	@SuppressWarnings("rawtypes")
+				Entry thisEntry = (Entry) it.next();
+		    	String tmp1 = (String) thisEntry.getKey();
+		    	String tmp2 = (String) thisEntry.getValue();
+		    	dt.setGMDataType(tmp1);
+		    	dt.setTGDDataType(tmp2);
+		    	GMTypeList.add(dt);	
+		    }
+		
+			
+		    //remove all the duplicates from the GMTypeList file	
+		    Map<String, GMDataType> map = new LinkedHashMap<String, GMDataType>();
+		    for(GMDataType i : GMTypeList){
+		    	map.put(i.getGMDataType(), i);
+		    }
+		    GMTypeList.clear();
+		    GMTypeList.addAll(map.values());
+		
+		    //create file where GM data type and TGD data type (int/float) will be recorded
+		    File file = new File(filepath + "\\GMDataType.txt");
+		
+		    // if file doesn't exist, then create it
+		    if (!file.exists()) {
+		    	file.createNewFile();
+		    }
+
+		    FileWriter fw = new FileWriter(file.getAbsoluteFile());
+		    BufferedWriter bw = new BufferedWriter(fw);
+		
+		    for (GMDataType x:GMTypeList) {	
+		    	bw.write(x.getGMDataType()+ "	" + x.getTGDDataType());
+		    	bw.newLine();
+		    }
+		    bw.close(); 
+		    System.out.println("Done");
+		}	
+		//=============================================================================================================
+		//=============================================================================================================
+		// This function extracts GM type information from t_scaled.h file 
+		private static void parserGMDT(String currentLine) throws IOException {
+			//Need a counter to pull only columns 3,8,9
+			int column = 0;
+			//Need a hold these value from each of columns
+			String holdValue = null;
+			//Reading in value from each token
+			String tmp = null;
+			StringTokenizer st = new StringTokenizer(currentLine);
+			//Create only one DateType instance for each line of read file....
+			GMDataType dt = new GMDataType();
+			while (st.hasMoreTokens()) {
+				column ++;
+				tmp = st.nextToken();
+				if (column == 1){
+					if (!tmp.contains("TYPE".toUpperCase())){
+						break;
+					}
+				}
+				else if (column == 2) {
+					holdValue = tmp.trim();
+					dt.setGMDataType(tmp.trim());
+					String tmp2 = checkType(tmp.trim());
+					dt.setTGDDataType( tmp2);
+				} else if (column == 7) {
+					holdValue += (" " + tmp);
+					dt.setMinValue(tmp);
+				} else if (column == 8) {
+					holdValue += (" " + tmp);
+					dt.setMaxValue(tmp);
+					break;	//get out of the loop, dont need to parse this line anymore
+				}
+			}
+			if (holdValue == null | dt == null) {
+				dt.setGMDataType("error");
+				dt.setMinValue("error");
+				dt.setMaxValue("error");
+			}		
+			GMTypeList.add(dt);					
+		}
+
+		//=========================================================================================================
+		//==========================================================================================================	
 		//This function is designed to read Rte_Runnables.h
 		private void readFunctionFile(String filename) throws IOException{
 			//Read the file line by line
@@ -580,14 +854,13 @@ public class GenerateInputFiles {
 		private int varState; // 1 if it's input and 0 if it's output 
 		private String minValue;
 		private String maxValue;
-		
+		private String GMType;
+		private String TGDType;
+		private String FuncName;
+		private String VarReplName;
 		
 		public float getVarValue() {
 			return varValue;
-		}
-		public void setvarSize(int i) {
-			// TODO Auto-generated method stub
-			
 		}
 		public void setVarValue(float varValue) {
 			this.varValue = varValue;
@@ -615,8 +888,7 @@ public class GenerateInputFiles {
 		}
 		public void setVarArray(ArrayList<Float> varArray) {
 			this.varArray = varArray;
-		}
-		
+		}	
 		public int getvarState() {
 			return varState;
 		}
@@ -635,7 +907,30 @@ public class GenerateInputFiles {
 		public void setMaxValue(String maxValue) {
 			this.maxValue = maxValue;
 		}
-		
+		public String getGMType() {
+			return GMType;
+		}
+		public void setGMType(String gMType) {
+			GMType = gMType;
+		}
+		public String getTGDType() {
+			return TGDType;
+		}
+		public void setTGDType(String tGDType) {
+			TGDType = tGDType;
+		}
+		public String getFuncName() {
+			return FuncName;
+		}
+		public void setFuncName(String funcName) {
+			FuncName = funcName;
+		}
+		public String getVarReplName() {
+			return VarReplName;
+		}
+		public void setVarReplName(String varReplName) {
+			VarReplName = varReplName;
+		}
 	}
 
 	class FunctionType {
@@ -668,4 +963,38 @@ public class GenerateInputFiles {
 		private int time;
 		private String isLeaf;
 		private String isScheduable;
+	}
+	
+	class GMDataType {
+		
+		private String GMDataType;
+		private String TGDDataType;
+		private String MinValue;
+		private String MaxValue; 
+		 
+		public String getGMDataType() {
+			return GMDataType;
+		}
+		public void setGMDataType(String gMDataType) {
+			GMDataType = gMDataType;
+		}
+		public String getTGDDataType() {
+			return TGDDataType;
+		}
+		public void setTGDDataType(String tGDDataType) {
+			TGDDataType = tGDDataType;
+		}
+		public String getMinValue() {
+			return MinValue;
+		}
+		public void setMinValue(String minValue) {
+			MinValue = minValue;
+		}
+		public String getMaxValue() {
+			return MaxValue;
+		}
+		public void setMaxValue(String maxValue) {
+			MaxValue = maxValue;
+		}
+		
 	}

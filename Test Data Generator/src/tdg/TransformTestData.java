@@ -27,7 +27,6 @@ public class TransformTestData {
         }
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
-     
             writer.append("group,");
     	    writer.append("case,case,case,case,,");
     	    writer.append("calibration,calibration,calibration,");
@@ -94,7 +93,13 @@ public class TransformTestData {
     	        	writer.append(",,,");
     	    	}
     	    	else if (!line.contains(cs)){
-    	    		writer.append(","+ line.substring(line.lastIndexOf('=')+1, line.length()));
+    	    		if(line.substring(line.lastIndexOf('=')+1,line.lastIndexOf('=')+2).equals("{")){
+    	    			writer.append(",\""+ line.substring(line.lastIndexOf('=')+1, line.length()));
+    	    			writer.append("\"");
+    	    		}
+    	    		else {
+    	    			writer.append(","+ line.substring(line.lastIndexOf('=')+1, line.length()));
+    	    		}
     	    	}
     	    }
     	    br.close();
