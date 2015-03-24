@@ -398,7 +398,6 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		    	genInpFiles.genFiles(srcfp.substring(0, srcfp.lastIndexOf("\\Software")),
 		    			this.txtGblVarFileLoc.getText(), this.txtInVarFileLoc.getText(),this.txtFuncFileLoc.getText());
 		    	System.out.println("Generate Input Files Process...Completed");
-		    	System.out.println("Update Source File path in config file and save");
 		    }
 		    else if ("TransTestData".equals(e.getActionCommand())) {
 		    	System.out.println("Transform Test Data Process...Started");

@@ -23,10 +23,10 @@ public class GenerateInputFiles {
 	private static HashMap<String, String> gmthm = new HashMap<String, String>();
 	
 	//Specify arraylist where type data will be temporarily stored
-	private static ArrayList<DataType> dataFrmTypesFile = new ArrayList<DataType>(); 
+	private static ArrayList<SCModDataType> dataFrmTypesFile = new ArrayList<SCModDataType>(); 
 	
 	//Specify arraylist where type data will be temporarily stored
-	//private static ArrayList<DataType> dataFrmLIBSFile = new ArrayList<DataType>(); 
+	private static ArrayList<SCModDataType> dataFrmLIBSFile = new ArrayList<SCModDataType>(); 
 	
 	//Prep list of calibrations. Will later be joined with global variables
 	private static ArrayList<DataType> dataFrmCalFile = new ArrayList<DataType>(); 	
@@ -55,8 +55,16 @@ public class GenerateInputFiles {
 	private String LIBfilepath = "";
 	//setup file path for the data type files
 	private String GMDTfilepath = "";
+	//setup file path for the input and output files
+	private String filepath_Ccode = "";
+
 	//ring name
-	private static String ringname = "CKP";
+	private static String ringname = "CTO";
+	
+	private static int CvrtFuncArgReadComplete = 1;
+	private static int EndCvrtRmvProcess = 1;
+	private static int PranthesisCnt = 0;
+	private static String FinalString = "";
 	
 	//End specification of arraylist/hashmap
 	
@@ -66,6 +74,7 @@ public class GenerateInputFiles {
 		this.Aspenfilepath = fp+"\\Aspen";
 		this.LIBfilepath = fp+"\\Software\\Libraries\\LIBS_FUNC";
 		this.GMDTfilepath = fp;
+		this.filepath_Ccode = fp+"\\Software\\Product_Software\\CTOR_BaseFUNC";
 		this.gblvarfilepath = gfp;
 		this.inputvarfilepath = ifp;
 		this.funclistfilepath = ffp;
@@ -112,140 +121,65 @@ public class GenerateInputFiles {
 		//Prepare GM Data Type to int/float type list
 		GMDataTypeList();
 		
+		//Modify C source code
+		
 		this.readDataTypeFile(GMDTfilepath +"\\GMDataType.txt");
-//		glbvar.readCvrtFuncFile(LIBfilepath + "LIBR_FUNC/MATH/MATH_CVT/mathpcvt.h");
-//		glbvar.readCvrtFuncFile(LIBfilepath + "FLTR_FUNC/FLTR_Math/FLTR_CVR_Conversion/fltrpcvr.h");
-		System.out.println("Done reading GMDataType.txt");
-		//populate data types into the arraylist and use it later for replacement
-//		glbvar.readGMDTFile(GMDTfilepath +"types.dat");			
+		
+		this.readCvrtFuncFile(LIBfilepath + "\\LIBR_FUNC\\MATH\\MATH_CVT\\mathpcvt.h");
+		
+		this.readCvrtFuncFile(LIBfilepath + "\\FLTR_FUNC\\FLTR_Math\\FLTR_CVR_Conversion\\fltrpcvr.h");
+		
 		//Read source code File and parse into dataFrmCalFile
-		this.readSourceFile(filepath + "\\Software\\Product_Software\\CTOR_BaseFUNC\\ctormaut.c");
+		this.readSourceFile(filepath_Ccode + "\\ctormaut.c");
+
 
 	}
 	
-	//=========================================================================================================
-	//=========================================================================================================	
-	//Read GM Data types into arraylist
-	private void readDataTypeFile(String filename) throws IOException{
-		
-		//Read the file line by line
-		String sLineReader = null;
-		BufferedReader br = null;
-		try {
-			//Setup the reader/scanner with file want to read from
-			br = new BufferedReader(new FileReader(filename));
-			while ((sLineReader=br.readLine()) != null) {
-				//Do not read lines that are empty
-				if (!sLineReader.isEmpty()) {
-					
-					DataType dt = new DataType();
-					String splitUpThisString [] = null;
-					
-				  //parses GM data type file one line from file by white spaces includes tab,space,nextline....	
-					splitUpThisString = sLineReader.split("\\s");  // \\s means white space
-                    dt.setGMType(splitUpThisString[0].trim());
-                    dt.setTGDType(splitUpThisString[1].trim());
-                    dataFrmTypesFile.add(dt);
-
-					}
-				}
-		
-		} catch (FileNotFoundException e) { //Should do multi-catch
-			//usually log this or do some system output to console
-		} catch (IOException e) {
-			//usually log this or do some system output to console
-		}  finally {
-			//Close the file
-			br.close();
-		}		
-		
-	}
-	
-    //===========================================================================================================
-	//=============================================================================================================
-	private void readSourceFile(String filename) throws IOException {
-		//Initialize Read from file 
-		FileInputStream fstream = new FileInputStream(filename);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-		String strLine; 
-		String replacedStrLine = null;
-		
-//				//Initialize output file
-		File outfile = new File(GMDTfilepath + "\\ModifiedSource.c");				
-		// if file doesn't exist, then create it
-		if (!outfile.exists()) {
-			outfile.createNewFile();
-		}
-		FileWriter fw = new FileWriter(outfile.getAbsoluteFile());
-		BufferedWriter bw = new BufferedWriter(fw);
-		
-		//Read File Line By Line
-		while((strLine = br.readLine()) != null){
-			//Loop through all the types and Replace GM Type with int/float:
-//					for (DataType x: dataFrmTypesFile) {
-//						System.out.println(x.getGMType()+": " + x.getMinRange() + ": " + x.getMaxRange());
-//					}
-			replacedStrLine = strLine;
-			for (DataType x:dataFrmTypesFile){
-				String tmp1 = x.getGMType().trim();
-				String tmp2 = x.getTGDType().trim();
-				if (replacedStrLine.contains(tmp1)){
-					replacedStrLine = replacedStrLine.replace(tmp1,tmp2);
-				}
-					
-				//System.out.println(tmp1 + tmp2);
-				//replacedStrLine = strLine.replace("TbBOOLEAN", "int");
-			}
-//					ReplaceCvrtFunc(replacedStrLine);
-			bw.write(replacedStrLine);
-			bw.newLine();	
-			//System.out.println(replacedStrLine);
-		}
-		
-		br.close();
-		bw.close();
-		
-	}
-
-	//===THis function writes Input data into CSV File==========================================================
+	//==================END MAIN==================================================================================
+	//============================================================================================================
+	//===THis function writes Input variables into CSV File==========================================================
 	public void writeToInputVarCSV() throws IOException{
 			
-		try{	
-			// Output data into a text file
-			String header = "varname,type,array size,min,max"; 
-			File file = new File(this.inputvarfilepath);
+			try{	
+				// Output data into a text file
+				String header = "varname,type,array size,min,max"; 
+				File file = new File(this.inputvarfilepath);
 			
-			// if file doesn't exist, then create it
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(header);
-			bw.newLine();
-			
-			for (DataType x:SplitVarFile) {
-				
-				if (!(ringname.contains(x.getVarName().substring(2,5))) && !("HWIO".contains(x.getVarName().substring(2,6)))){
-				String temp = x.getVarType();
-				String newType = checkType(temp);
-				bw.write(x.getVarName() + "," + newType + "," + x.getVarSize() +",null,null");
-				bw.newLine();
+				// if file doesn't exist, then create it
+				if (!file.exists()) {
+					file.createNewFile();
 				}
+
+				FileWriter fw = new FileWriter(file.getAbsoluteFile());
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write(header);
+				bw.newLine();
+			
+				for (DataType x:SplitVarFile) {
+					//Filter out any variables that start with ring name or those that start with HWIO. For official
+					//version may want to leave HWIO variables in there. 
+					if (!(ringname.contains(x.getVarName().substring(2,5))) && 
+							!("HWIO".contains(x.getVarName().substring(2,6))) &&
+							!("_sfEvent".contains(x.getVarName().substring(0,7)))){
+						String temp = x.getVarType();
+						String newType = checkType(temp);
+						bw.write(x.getVarName() + "," + newType + "," + x.getVarSize() +",null,null");
+						bw.newLine();
+					}
+				}
+				bw.close(); 
+				System.out.println("Done Creating Input Var File");
+				// End outputting into a text file
+			
 			}
-			bw.close(); 
-			// End outputting into a text file
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 			
 		}
-	       catch (IOException e) {
-			e.printStackTrace();
-		}
-			
-		}
-	//============================================================================================================
-	//===THis function writes Input data into CSV File==========================================================
-	public void writeToFuncFileCSV() throws IOException{
+		//============================================================================================================
+		//===THis function writes list of functions into CSV File=====================================================
+		public void writeToFuncFileCSV() throws IOException{
 			try{	
 				// Output data into a text file
 				String header = "FunctrionName,time,isLeaf,isSchedulable"; 
@@ -262,11 +196,13 @@ public class GenerateInputFiles {
 				bw.newLine();
 				
 				for (FunctionType x:FunctionFile) {
+					
 					bw.write(x.getFuncName() + ",0,true,true");
 					bw.newLine();
 
 				}
 				bw.close(); 
+				System.out.println("Done Creating Function File");
 				// End outputting into a text file
 				
 			}
@@ -293,6 +229,7 @@ public class GenerateInputFiles {
 				bw.write(header);
 				bw.newLine();
 				
+				//writes calibrations
 				for (DataType x:dataFrmCalFile) {
 					String temp = x.getVarType();
 					String newType = checkType(temp);
@@ -308,13 +245,16 @@ public class GenerateInputFiles {
 
 			//populate enumerated constants
 			for (DataType x:EnumFile) {
-				bw.write(x.getVarName() + ",int,1,true," + x.getVarValue());
+				String temp = x.getVarType();
+				String newType = checkType(temp);
+				bw.write(x.getVarName() + "," + newType + ", 1, true," + x.getVarValue());
 				bw.newLine();
 			}		
 			
-			//populate variables
+			//populate global variables
 			for (DataType x:SplitVarFile) {
-				if (ringname.contains(x.getVarName().substring(2,5))) {
+				if (ringname.contains(x.getVarName().substring(2,5)) ||
+				    ("_sfEvent".contains(x.getVarName().substring(0,7))) ){
 					String temp = x.getVarType();
 					String newType = checkType(temp);
 					bw.write(x.getVarName() + "," + newType + "," + x.getVarSize() + ",false,");
@@ -328,6 +268,7 @@ public class GenerateInputFiles {
 			}	
 			
 			bw.close(); 
+			System.out.println("Done Creating Global Var File");	
 			// End outputting into a text file
 			
 		} catch (IOException e) {
@@ -381,28 +322,48 @@ public class GenerateInputFiles {
 				br.close();
 			}				
 		}
-		
-	    //========================================================================================================
-		//==THis method is takes GM type as an input and returns int or float
-		public static String checkType(String GMType){
+		//========================================================================================================
+		//========================================================================================================
+		//==This method takes GM type as an input and returns int or float
+		public static String checkType(String GMType) throws IOException{
+					
+			String tmp = null; 
+			GMDataType dt = new GMDataType();
 			
-			if ((GMType.equals(GMType.toUpperCase()) && !"FLOAT".contains(GMType))|| 
-				"TbBOOLEAN".contains(GMType) || ("Te".contains(GMType.substring(0,2)))){
-				if("_".contains(GMType.substring(GMType.length()-3))){
-					if ("00".contains(GMType.substring(GMType.length()-2, GMType.length()-1))) {
-						return "int";
+			if ((!"FLOAT".contains(GMType) && !"DOUBLE".contains(GMType))){
+			    if ("00".contains(GMType.substring(GMType.length()-2, GMType.length())) ||
+			    	"TbBOOLEAN".contains(GMType) || ("Te".contains(GMType.substring(0,2)))) {
+						tmp = "int";
 					}
-					else {
-						return "float";
-				    }
-				}
-				else{
-					return "int";
-				}		
+				else {
+				    	//check if this type is specified inside t_scaled.h file
+					    if(gmthm.containsKey(GMType)){
+					    	tmp = gmthm.get(GMType);
+					    }
+					    else {
+					    	//if type contains lower case characters, or is not *_00, then it's a float
+					    	if ((!GMType.equals(GMType.toUpperCase()) || ("_".contains(GMType.substring(GMType.length()-3, GMType.length() - 2)) || 
+					    		"_".contains(GMType.substring(GMType.length()-4, GMType.length() - 3))))){
+					    		tmp = "float";
+					    	}
+					    	else {
+					    		tmp = "int";
+					    	}
+
+					    }
+				    } 
+		
 			}
 			else {
-				return "float";
+				tmp = "float";
 			}
+			//System.out.println(GMType + tmp);
+			
+			dt.setGMDataType(GMType);
+			dt.setTGDDataType(tmp);
+			
+			GMTypeList.add(dt);
+			return tmp;
 			
 		}
 		//=========================================================================================================
@@ -468,7 +429,7 @@ public class GenerateInputFiles {
 		    	bw.newLine();
 		    }
 		    bw.close(); 
-		    System.out.println("Done");
+		    System.out.println("Done Creating GM Data Type file");
 		}	
 		//=============================================================================================================
 		//=============================================================================================================
@@ -512,9 +473,8 @@ public class GenerateInputFiles {
 			}		
 			GMTypeList.add(dt);					
 		}
-
 		//=========================================================================================================
-		//==========================================================================================================	
+		//==========================================================================================================
 		//This function is designed to read Rte_Runnables.h
 		private void readFunctionFile(String filename) throws IOException{
 			//Read the file line by line
@@ -532,25 +492,23 @@ public class GenerateInputFiles {
 						String FuncNameTemp = null;
 						String splitUpFuncNameString [] = null;
 						
-					  //parses splitvar file one line from file by white spaces includes tab,space,nextline....	
+					  //parses Rte_Runnables.h file one line from file by white spaces includes tab,space,nextline....	
 						splitUpThisString = sLineReader.split("\\s");  // \\s means white space
-						if (splitUpThisString.length >= 2){				
+						if (splitUpThisString.length >= 2){
 						         FuncNameTemp = splitUpThisString[1].trim();
 						         if (FuncNameTemp.length() >= 7){
 						        	 String temp = "Mng" + ringname + "R_";
 								 if (temp.contains(FuncNameTemp.substring(0, 7))){
 										//strip function name from "(void)"
-										splitUpFuncNameString = FuncNameTemp.split("\\(");							
-										dt.setFuncName(splitUpFuncNameString[0].trim());	
+											splitUpFuncNameString = FuncNameTemp.split("\\(");							
+											dt.setFuncName(splitUpFuncNameString[0].trim());
+
 										FunctionFile.add(dt);
 									}
 						         }
-						}
-						
-				   }
-					
-			}
-				
+						}			
+				   }		
+				}		
 			} catch (FileNotFoundException e) { //Should do multi-catch
 				//usually log this or do some system output to console
 			} catch (IOException e) {
@@ -559,6 +517,7 @@ public class GenerateInputFiles {
 				//Close the file
 				br.close();
 			}		
+			
 		}
 		
 		//=========================================================================================================
@@ -576,21 +535,18 @@ public class GenerateInputFiles {
 					if (!sLineReader.isEmpty()) {
 						DataType dt = new DataType();
 						
-					//parses splitvar file one line from file by white spaces includes tab,space,nextline....
+						//parses splitvar file one line from file by white spaces includes tab,space,nextline....
 						String splitUpThisString [] = null;
 						splitUpThisString = sLineReader.split("\\s");  // \\s means white space
 						
 						if (splitUpThisString != null) {
-
+							 dt.setVarType(splitUpThisString[1].trim());
 							 dt.setVarName(splitUpThisString[2].trim());
 							 dt.setVarValue(Integer.valueOf(splitUpThisString[3]));
-
 						}
 						EnumFile.add(dt);
-
-				}
-			}
-				
+					}
+				}		
 			} catch (FileNotFoundException e) { //Should do multi-catch
 				//usually log this or do some system output to console
 			} catch (IOException e) {
@@ -616,7 +572,7 @@ public class GenerateInputFiles {
 						if (!sLineReader.isEmpty()) {
 							DataType dt = new DataType();
 							
-						//parses splitvar file one line from file by white spaces includes tab,space,nextline....
+					    	//parses splitvar file one line from file by white spaces includes tab,space,nextline....
 							String splitUpThisString [] = null;
 							splitUpThisString = sLineReader.split("\\s");  // \\s means white space
 							
@@ -627,10 +583,8 @@ public class GenerateInputFiles {
 
 							}
 								SplitVarFile.add(dt);
-		
-					}
-				}
-					
+				    	}
+			    	}				
 				} catch (FileNotFoundException e) { //Should do multi-catch
 					//usually log this or do some system output to console
 				} catch (IOException e) {
@@ -641,18 +595,14 @@ public class GenerateInputFiles {
 				}
 				
 				//sort through splitVar file to identify arrays as well as whether it's a global var on an input var
-				Sortsplitvarfile();
-			
+				Sortsplitvarfile();		
 		}
-		
-
 		//==========================================================================================================
 		//============================================================================================================
-		//sort through splitVar file to identify arrays as well as whether it's a global var on an input varaible
+		//sort through splitVar file to identify arrays as well as whether it's a global var on an input variable
 		public void Sortsplitvarfile(){
 			
 			int  count = 0; 
-
 			String VarNameNew = null;
 			
 			//Perform 1st filtering to remove any variable duplicates if present
@@ -686,13 +636,13 @@ public class GenerateInputFiles {
 					}
 			}	
 	      //perform one last filtering to remove duplicates after removing the size of the variables []
-	    		//Perform 1st filtering to remove any variable duplicates if present
-	    		Map<String, DataType> map2 = new LinkedHashMap<String, DataType>();
-	    		for(DataType i : SplitVarFile){
+	      //Perform 1st filtering to remove any variable duplicates if present
+	      Map<String, DataType> map2 = new LinkedHashMap<String, DataType>();
+	      for(DataType i : SplitVarFile){
 	    			map2.put(i.getVarName(), i);
 	    		}
-	    		SplitVarFile.clear();
-	    		SplitVarFile.addAll(map2.values());		
+	      SplitVarFile.clear();
+	      SplitVarFile.addAll(map2.values());		
 		}
 		
 		//==========================================================================================================
@@ -723,7 +673,7 @@ public class GenerateInputFiles {
 
 		//==============================================================================================
 		//==============================================================================================
-		//This only parses one line from file by white spaces includes tab,space,nextline....
+		//This parses one line from file by white spaces includes tab,space,nextline....
 		public DataType parser4Cal (String currentLine) { 
 			//Need a counter to pull only columns 3,4,9
 			int column = 0;
@@ -756,6 +706,7 @@ public class GenerateInputFiles {
 				}
 			}
 			if (holdValue == null | dt == null) {
+				System.out.println("something is wrong....");
 				dt.setVarName("error");
 				dt.setVarType("error");
 				dt.setVarSize(0);
@@ -776,7 +727,7 @@ public class GenerateInputFiles {
 				while ((sLineReader=br.readLine()) != null) {
 					//Do not read lines that are empty
 					if (!sLineReader.isEmpty()) {
-//						String valuedData = split4EachCalValLine(sLineReader);
+	                //String valuedData = split4EachCalValLine(sLineReader);
 						DataType dt = split4EachCalValLine(sLineReader);
 						if (dt != null) {
 							datFrmCalValFile.add(dt);
@@ -803,20 +754,20 @@ public class GenerateInputFiles {
 
 			DataType dt = new DataType();
 			
+//			System.out.println("read line: " + currentLine);
 			String splitUpThisString [] = null;
 			if (!currentLine.isEmpty()) {
 				splitUpThisString = currentLine.split("\\s");
 			}
 			
 			if (splitUpThisString != null) {
-
 				if (splitUpThisString.length>2) {
 					dt.setVarName(splitUpThisString[1].trim());
 					//Should be the last column
 					dt.setVarValue(Float.parseFloat(splitUpThisString[splitUpThisString.length-1]));
 				}
 				
-			}			
+			}		
 			return dt;
 
 		}
@@ -841,6 +792,291 @@ public class GenerateInputFiles {
 			}
 
 		}
+		
+		
+		   //Read convert functions into dataFrmLIBSFile array list
+			private void readCvrtFuncFile(String filename) throws IOException {
+				//Read the file line by line
+				String sLineReader = null;
+				BufferedReader br = null;
+				try {
+					//Setup the reader/scanner with file want to read from
+					br = new BufferedReader(new FileReader(filename));
+					while ((sLineReader=br.readLine()) != null) {
+						//Do not read lines that are empty
+						if (sLineReader.startsWith("INLINE")) {
+							
+							SCModDataType dt = new SCModDataType();
+							String splitUpThisString [] = null;
+							
+						  //parses GM data type file one line from file by white spaces includes tab,space,nextline....	
+							splitUpThisString = sLineReader.split("\\s");  // \\s means white space
+		                    
+		                    String FuncName_tmp = splitUpThisString[2].trim();
+		                    String SplitFuncName_tmp [] = null;
+		                    SplitFuncName_tmp = FuncName_tmp.split("\\(");
+		                    dt.setFuncName(SplitFuncName_tmp[0].trim());
+		                    
+		                    dataFrmLIBSFile.add(dt);
+
+							}
+						}
+//				for (DataType x:dataFrmLIBSFile){
+//					System.out.println(x.getFuncName());
+//				}
+				
+				} catch (FileNotFoundException e) { //Should do multi-catch
+					//usually log this or do some system output to console
+				} catch (IOException e) {
+					//usually log this or do some system output to console
+				}  finally {
+					//Close the file
+					br.close();
+				}				
+			}
+			//=========================================================================================================
+			//=========================================================================================================	
+			//Read GM Data types into arraylist
+			private void readDataTypeFile(String filename) throws IOException{
+				
+				//Read the file line by line
+				String sLineReader = null;
+				BufferedReader br = null;
+				try {
+					//Setup the reader/scanner with file want to read from
+					br = new BufferedReader(new FileReader(filename));
+					while ((sLineReader=br.readLine()) != null) {
+						//Do not read lines that are empty
+						if (!sLineReader.isEmpty()) {
+							
+							SCModDataType dt = new SCModDataType();
+							String splitUpThisString [] = null;
+							
+						  //parses GM data type file one line from file by white spaces includes tab,space,nextline....	
+							splitUpThisString = sLineReader.split("\\s");  // \\s means white space
+		                    dt.setGMType(splitUpThisString[0].trim());
+		                    dt.setTGDType(splitUpThisString[1].trim());
+		                    dataFrmTypesFile.add(dt);
+
+							}
+						}
+				
+				} catch (FileNotFoundException e) { //Should do multi-catch
+					//usually log this or do some system output to console
+				} catch (IOException e) {
+					//usually log this or do some system output to console
+				}  finally {
+					//Close the file
+					br.close();
+				}		
+				
+			}
+			
+		    //===========================================================================================================
+			//=============================================================================================================
+				private void readSourceFile(String filename) throws IOException {
+					//Initialize Read from file 
+					FileInputStream fstream = new FileInputStream(filename);
+					BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+					String strLine; 
+					String replacedStrLine = null;
+					
+//					//Initialize output file
+					File outfile = new File(GMDTfilepath + "\\ModifiedSource.c");				
+					// if file doesn't exist, then create it
+					if (!outfile.exists()) {
+						outfile.createNewFile();
+					}
+					FileWriter fw = new FileWriter(outfile.getAbsoluteFile());
+					BufferedWriter bw = new BufferedWriter(fw);
+					
+					CvrtFuncArgReadComplete = 1;
+					EndCvrtRmvProcess = 1;
+					PranthesisCnt = 0;
+					
+					//Read File Line By Line
+					while((strLine = br.readLine()) != null){
+						//Loop through all the types and Replace GM Type with int/float:
+//						for (DataType x: dataFrmTypesFile) {
+//							System.out.println(x.getGMType()+": " + x.getMinRange() + ": " + x.getMaxRange());
+//						}
+						replacedStrLine = strLine;
+						for (SCModDataType x:dataFrmTypesFile){
+							String tmp1 = x.getGMType().trim();
+							String tmp2 = x.getTGDType().trim();
+							
+							String splitUpString [] = null;
+							splitUpString = replacedStrLine.split("\\s"); 
+							for(String thistoken: splitUpString){
+								if (thistoken.equals(tmp1)){
+									replacedStrLine = replacedStrLine.replace(tmp1,tmp2);
+								}
+							}
+
+								
+							//System.out.println(tmp1 + tmp2);
+							//replacedStrLine = strLine.replace("TbBOOLEAN", "int");
+						}
+						ReplaceCvrtFunc(replacedStrLine);
+						if (EndCvrtRmvProcess == 1) {
+							bw.write(FinalString);
+							}
+						
+						//System.out.println(replacedStrLine);
+						bw.newLine();	
+						//System.out.println(replacedStrLine);
+					}
+					
+					br.close();
+					bw.close();
+					
+				}
+				
+				//=========================================================================================================================
+				//=========================================================================================================================
+				//This function will find and replace Convert function
+				private static void ReplaceCvrtFunc(String CurrntString) {
+//					
+//					//String replacedStrLine = null;
+					int CVRTFuncFound = 0;
+				//	System.out.println(ReturnString);
+					
+					if (EndCvrtRmvProcess == 1){
+					      FinalString = "";
+					      }
+
+					for (SCModDataType x:dataFrmLIBSFile){
+						String CvrtFuncName = x.getFuncName().trim();
+						
+						if(CurrntString.contains(CvrtFuncName)){
+							CVRTFuncFound = 1;
+							//replacedStrLine = CurrntString.replace(tmp + "(","");
+							//System.out.println(CurrntString);
+							//remove all the arguments passed to the convert function function, except for the first one
+							String splitCurrntString_Step1 [] = null;
+							splitCurrntString_Step1 = CurrntString.split("\\(");  //  1st step split based on parenthesis
+							int ThisTokenCount = 0;
+							int StartThirdAndUpToken = 0;
+							int ArgumentFoundOfCVRTArgument = 0;
+							
+							for(String thistoken: splitCurrntString_Step1){
+								ThisTokenCount ++;
+								if (ThisTokenCount >= 3 ){
+									StartThirdAndUpToken = 1;
+								}
+								//System.out.println(thistoken);
+								//Find token where the converted function call exists. If function found, remove it
+								if(thistoken.contains(CvrtFuncName)){
+									String tmp = thistoken.replace(CvrtFuncName,"");
+									FinalString = FinalString.concat(tmp);
+									//identify that the process of removing Cvrt function has started and is not completed yet. 
+									CvrtFuncArgReadComplete = 0;
+									EndCvrtRmvProcess = 0;
+								}	
+								else {
+									for (int i = 0; i<thistoken.length(); i++){
+										//System.out.println(thistoken.charAt(i));
+										if(EndCvrtRmvProcess == 0){
+											if(CvrtFuncArgReadComplete == 0){
+												if(thistoken.charAt(i) == ')'){
+													PranthesisCnt++;
+													if ((PranthesisCnt == 1) && (ArgumentFoundOfCVRTArgument == 1)){
+														FinalString = FinalString +")";
+														ArgumentFoundOfCVRTArgument = 0;
+														PranthesisCnt--;
+													}
+													if (PranthesisCnt == 2){
+														FinalString = FinalString +"()";
+														PranthesisCnt --;												
+													}
+													
+												}
+												else if(thistoken.charAt(i) == ','){
+													if(PranthesisCnt == 1){
+														FinalString = FinalString +"()";
+														PranthesisCnt --;
+													}
+													CvrtFuncArgReadComplete = 1;
+												}
+												else{
+													if (StartThirdAndUpToken == 1){
+														StartThirdAndUpToken = 0;
+														ArgumentFoundOfCVRTArgument = 1;
+														FinalString = FinalString + "(";
+													}
+													FinalString = FinalString + thistoken.charAt(i);
+												}
+													
+											}
+											if(thistoken.charAt(i) == ';'){
+												FinalString = FinalString +";";
+												PranthesisCnt = 0;
+												CvrtFuncArgReadComplete = 1;
+												EndCvrtRmvProcess = 1;
+		                            		}
+										}
+										else {
+											FinalString = FinalString + thistoken.charAt(i);
+										}
+											
+										}
+									}
+								}
+							
+								if (EndCvrtRmvProcess == 1){
+									//System.out.println(FinalString);
+							      }
+						     }
+						else if (EndCvrtRmvProcess == 0){
+							CVRTFuncFound = 1;
+							String splitCurrntString_Step1 [] = null;
+							splitCurrntString_Step1 = CurrntString.split("\\(");  //  1st step split based on parenthesis
+							for(String thistoken: splitCurrntString_Step1){
+
+								for (int i = 0; i<thistoken.length(); i++){
+
+										if(CvrtFuncArgReadComplete == 0){
+											if(thistoken.charAt(i) == ')'){
+												PranthesisCnt++;
+												if (PranthesisCnt == 2){
+													FinalString = FinalString +"()";
+												
+												}
+											
+											}
+											else if(thistoken.charAt(i) == ';'){
+												FinalString = FinalString +");";
+												PranthesisCnt = 0;
+												CvrtFuncArgReadComplete = 1;
+												EndCvrtRmvProcess = 1;
+		                        			}
+											else if(thistoken.charAt(i) == ','){
+												CvrtFuncArgReadComplete = 1;
+											}
+										}
+										if(thistoken.charAt(i) == ';'){
+											FinalString = FinalString +";";
+											PranthesisCnt = 0;
+											CvrtFuncArgReadComplete = 1;
+											EndCvrtRmvProcess = 1;
+		                        		}
+									
+									
+								}
+						    }
+						}
+					}
+					
+					if (CVRTFuncFound == 0) {
+						FinalString = CurrntString;
+					//	ReturnString = FinalString;
+					}
+					
+				//	System.out.println(ReturnString);
+					if (EndCvrtRmvProcess == 1) {
+					System.out.println(FinalString);
+					}
+			}
 
 	}
 
@@ -854,10 +1090,7 @@ public class GenerateInputFiles {
 		private int varState; // 1 if it's input and 0 if it's output 
 		private String minValue;
 		private String maxValue;
-		private String GMType;
-		private String TGDType;
-		private String FuncName;
-		private String VarReplName;
+		
 		
 		public float getVarValue() {
 			return varValue;
@@ -888,7 +1121,8 @@ public class GenerateInputFiles {
 		}
 		public void setVarArray(ArrayList<Float> varArray) {
 			this.varArray = varArray;
-		}	
+		}
+		
 		public int getvarState() {
 			return varState;
 		}
@@ -907,31 +1141,10 @@ public class GenerateInputFiles {
 		public void setMaxValue(String maxValue) {
 			this.maxValue = maxValue;
 		}
-		public String getGMType() {
-			return GMType;
-		}
-		public void setGMType(String gMType) {
-			GMType = gMType;
-		}
-		public String getTGDType() {
-			return TGDType;
-		}
-		public void setTGDType(String tGDType) {
-			TGDType = tGDType;
-		}
-		public String getFuncName() {
-			return FuncName;
-		}
-		public void setFuncName(String funcName) {
-			FuncName = funcName;
-		}
-		public String getVarReplName() {
-			return VarReplName;
-		}
-		public void setVarReplName(String varReplName) {
-			VarReplName = varReplName;
-		}
+		
 	}
+
+
 
 	class FunctionType {
 		
@@ -964,37 +1177,67 @@ public class GenerateInputFiles {
 		private String isLeaf;
 		private String isScheduable;
 	}
-	
+
+
 	class GMDataType {
 		
-		private String GMDataType;
-		private String TGDDataType;
-		private String MinValue;
-		private String MaxValue; 
-		 
-		public String getGMDataType() {
-			return GMDataType;
-		}
-		public void setGMDataType(String gMDataType) {
-			GMDataType = gMDataType;
-		}
-		public String getTGDDataType() {
-			return TGDDataType;
-		}
-		public void setTGDDataType(String tGDDataType) {
-			TGDDataType = tGDDataType;
-		}
-		public String getMinValue() {
-			return MinValue;
-		}
-		public void setMinValue(String minValue) {
-			MinValue = minValue;
-		}
-		public String getMaxValue() {
-			return MaxValue;
-		}
-		public void setMaxValue(String maxValue) {
-			MaxValue = maxValue;
-		}
+	 private String GMDataType;
+	 private String TGDDataType;
+	 private String MinValue;
+	 private String MaxValue;
+	 
+	 
+	public String getGMDataType() {
+		return GMDataType;
+	}
+	public void setGMDataType(String gMDataType) {
+		GMDataType = gMDataType;
+	}
+	public String getTGDDataType() {
+		return TGDDataType;
+	}
+	public void setTGDDataType(String tGDDataType) {
+		TGDDataType = tGDDataType;
+	}
+	public String getMinValue() {
+		return MinValue;
+	}
+	public void setMinValue(String minValue) {
+		MinValue = minValue;
+	}
+	public String getMaxValue() {
+		return MaxValue;
+	}
+	public void setMaxValue(String maxValue) {
+		MaxValue = maxValue;
+	}
+	 
+	 
+	}
+
+	class SCModDataType {
 		
+		private String GMType;
+		private String TGDType;
+		private String FuncName;
+		
+		public String getGMType() {
+			return GMType;
+		}
+		public void setGMType(String gMType) {
+			GMType = gMType;
+		}
+		public String getTGDType() {
+			return TGDType;
+		}
+		public void setTGDType(String tGDType) {
+			TGDType = tGDType;
+		}
+		public String getFuncName() {
+			return FuncName;
+		}
+		public void setFuncName(String funcName) {
+			FuncName = funcName;
+		}
+
 	}
