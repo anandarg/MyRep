@@ -19,7 +19,7 @@ public class TestDataGeneratorMain extends JFrame{
 		this.setTitle("Test Data Generator");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
-		this.setSize(825, 650);
+		this.setSize(825, 675);
 		this.setVisible(true);
 	   	
 	}

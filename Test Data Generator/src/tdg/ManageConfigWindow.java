@@ -33,6 +33,8 @@ public class ManageConfigWindow {
 	String testDataFile = new String("");
 	String newGlobalVarFile = new String("");
 	String transTestDataFile = new String("");
+	String ringName = new String("");
+	
 	public ManageConfigWindow(){
 		
 	}
@@ -53,7 +55,7 @@ public class ManageConfigWindow {
 			}
 			else if (modCFile.isEmpty()) {
 				modCFile = confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "ModifiedSource.c";
-			}
+			}			
 			globalVarFile = ConfigProperties.getProperty("GlobalVarFile");
 			if (globalVarFile == null){
 				globalVarFile = new String(confFile.substring(0, confFile.lastIndexOf(File.separator)) + "\\" + "GlobalVar.csv");
@@ -97,6 +99,7 @@ public class ManageConfigWindow {
 			nbThreads = ConfigProperties.getProperty("nbThreads");
 			maxCycles = ConfigProperties.getProperty("MaxCycle");
 			firstCycle = ConfigProperties.getProperty("FirstCycle");
+			ringName = ConfigProperties.getProperty("RingName");
 			
 			targetStateFile = ConfigProperties.getProperty("ConditionClauseFile");
 			if (targetStateFile == null){
@@ -182,6 +185,7 @@ public class ManageConfigWindow {
 			prop.setProperty("nbThreads", this.nbThreads);
 			prop.setProperty("MaxCycle", this.maxCycles);
 			prop.setProperty("FirstCycle", this.firstCycle);
+			prop.setProperty("RingName", this.ringName);
 			
 			if(this.targetStateFile.isEmpty()) {
 				this.targetStateFile = cFile.substring(0, cFile.lastIndexOf("\\Software")) + "\\" + "Target.csv";
@@ -293,6 +297,10 @@ public class ManageConfigWindow {
 		return this.transTestDataFile;
 	}
 	
+	public String getRingName(){
+		return this.ringName;
+	}
+		
 	public void setConfigFile(String loc){
 		this.confFile = loc;
 	}
@@ -355,5 +363,9 @@ public class ManageConfigWindow {
 	
 	public void setTransTestDataFile(String loc){
 		this.transTestDataFile = loc;
+	}
+	
+	public void setRingName(String name){
+		this.ringName = name;
 	}
 }
