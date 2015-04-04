@@ -57,7 +57,7 @@ public class GenerateInputFiles {
 	//setup file path for the data type files
 	private String GMDTfilepath = "";
 	//setup file path for the input and output files
-	private String filepath_Ccode = "";
+	//private String filepath_Ccode = "";
 
 	//ring name
 	private String ringname = "";
@@ -78,7 +78,7 @@ public class GenerateInputFiles {
 		this.Aspenfilepath = fp+"\\Aspen";
 		this.LIBfilepath = fp+"\\Software\\Libraries\\LIBS_FUNC";
 		this.GMDTfilepath = fp;
-		this.filepath_Ccode = fp+"\\Software\\Product_Software\\CTOR_BaseFUNC";
+//		this.filepath_Ccode = fp+"\\Software\\Product_Software\\CTOR_BaseFUNC";
 		this.gblvarfilepath = gfp;
 		this.inputvarfilepath = ifp;
 		this.funclistfilepath = ffp;
