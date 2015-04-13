@@ -13,7 +13,7 @@ public class TransformTestData {
 		
 	}
 	
-	public void TransformData(String srcTestDataFile, String tgtTestDataFile) {
+	public void TransformData(String srcTestDataFile, String tgtTestDataFile, String firstCycle) {
 		
 		CharSequence cs = "##";
 		int cycleStart = 0;
@@ -83,6 +83,9 @@ public class TransformTestData {
     	    
     	    br = new BufferedReader(new FileReader(srcTestDataFile));
     	    int stepctr = 0;
+    	    if (!firstCycle.equals("")) 
+    	    	stepctr = Integer.parseInt(firstCycle);
+    	    
     	    while ((line = br.readLine()) != null) {
     	      
     	    	if (line.trim().length() == 0) {

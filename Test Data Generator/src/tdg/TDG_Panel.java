@@ -418,7 +418,8 @@ public class TDG_Panel extends JPanel implements ActionListener{
 		    }
 		    else if ("TransTestData".equals(e.getActionCommand())) {
 		    	System.out.println("Transform Test Data Process...Started");
-			    trnTestData.TransformData(this.txtTestDataFileLoc.getText(), this.txtTransTestDataFileLoc.getText());
+			    trnTestData.TransformData(this.txtTestDataFileLoc.getText(), this.txtTransTestDataFileLoc.getText(), 
+			    		this.txtFirstCycle.getText());
 			    System.out.println("Transform Test Data Process...Completed");
 			}
 		    else if ("GenRepFile".equals(e.getActionCommand())) {
